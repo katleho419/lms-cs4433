@@ -31,3 +31,30 @@ jobs:
         with:
           name: coverage-report
           path: build/coverage_report.md
+
+  static-analysis:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build libsqlite3-dev libssl-dev clang-tidy cppcheck
+
+      - name: clang-tidy (any finding fails the build)
+        run: |
+          cmake -S . -B build-analysis -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLMS_BUILD_TESTS=OFF
+          find src -name '*.cpp' | sort | xargs clang-tidy -p build-analysis --quiet --warnings-as-errors='*' 2>&1 | tee clang-tidy.txt
+
+      - name: cppcheck (report only for now)
+        continue-on-error: true
+        run: cppcheck --enable=warning,style,performance,portability --std=c++17 --inline-suppr --suppress=missingIncludeSystem --error-exitcode=1 -I src src 2> cppcheck.txt
+
+      - name: Upload analysis reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-analysis
+          path: |
+            clang-tidy.txt
+            cppcheck.txt
+          if-no-files-found: ignore
