@@ -23,6 +23,7 @@ never on a real installation. The database file is created readable by its owner
 - Users, by role: `docs/USER_MANUAL.md`
 - What is in this version and what is not: `docs/RELEASE_NOTES.md`
 - Maintenance: change request CR1 (extension for the whole class): `docs/CHANGE_REQUEST_CR1.md`
+- Professional, legal and ethical issues: `docs/PROFESSIONAL_ISSUES.md`
 
 ## Layout
 - src/domain   entities, polymorphic User, Strategy penalty policies, UserFactory
