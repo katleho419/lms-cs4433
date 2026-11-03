@@ -45,9 +45,9 @@ jobs:
           cmake -S . -B build-analysis -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLMS_BUILD_TESTS=OFF
           find src -name '*.cpp' | sort | xargs clang-tidy -p build-analysis --quiet --warnings-as-errors='*' 2>&1 | tee clang-tidy.txt
 
-      - name: cppcheck (report only for now)
-        continue-on-error: true
-        run: cppcheck --enable=warning,style,performance,portability --std=c++17 --inline-suppr --suppress=missingIncludeSystem --error-exitcode=1 -I src src 2> cppcheck.txt
+      - name: cppcheck (any finding fails the build)
+        run: |
+          cppcheck --enable=warning,style,performance,portability --std=c++17 --inline-suppr --suppress=missingIncludeSystem --error-exitcode=1 -I src src 2> cppcheck.txt || { cat cppcheck.txt; exit 1; }
 
       - name: Upload analysis reports
         if: always()

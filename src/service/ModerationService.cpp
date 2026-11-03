@@ -1,5 +1,7 @@
 #include "service/ModerationService.hpp"
 
+#include <algorithm>
+
 #include "service/AccessControl.hpp"
 #include "service/TransactionResult.hpp"
 #include "util/Errors.hpp"
@@ -122,13 +124,11 @@ ApproveResult ModerationService::approveReviewed(const User& hod, int assignment
             if (submission.getStatus() != SubmissionStatus::Marked) {
                 continue;
             }
-            bool unchanged = false;
-            for (const ReviewedMark& seen : reviewed) {
-                if (seen.submissionId == submission.getId() && submission.getFinalMark() == seen.finalMark) {
-                    unchanged = true;
-                    break;
-                }
-            }
+            const bool unchanged =
+                std::any_of(reviewed.begin(), reviewed.end(), [&](const ReviewedMark& seen) {
+                    return seen.submissionId == submission.getId() &&
+                           submission.getFinalMark() == seen.finalMark;
+                });
             if (!unchanged) {
                 ++outcome.skipped;
                 continue;

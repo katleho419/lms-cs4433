@@ -25,14 +25,13 @@ lms::DateTime startTime() {
 }
 
 void seedDemo(lms::AdminService& admin, lms::AuthService& auth, lms::AssignmentService& assignments,
-              lms::SubmissionService& submissions, const lms::IClock& clock) {
+              const lms::IClock& clock) {
     using namespace lms;
     const UserData a{"admin", "Demo Administrator", "Admin12345", "", 0};
     const UserPtr adminUser = auth.createInitialAdministrator(a);
     const Department dep = admin.createDepartment(*adminUser, "Computer Science");
     const Course course = admin.createCourse(*adminUser, "CS4433", "Software Engineering", dep.getId());
-    const UserPtr hod =
-        admin.createUser(*adminUser, Role::Hod, {"hod", "Dr Head", "Hod123456", "", dep.getId()});
+    admin.createUser(*adminUser, Role::Hod, {"hod", "Dr Head", "Hod123456", "", dep.getId()});
     const UserPtr lec = admin.createUser(*adminUser, Role::Lecturer,
                                          {"lecturer", "Ms Lecturer", "Lect123456", "", dep.getId()});
     const UserPtr s1 =
@@ -44,7 +43,6 @@ void seedDemo(lms::AdminService& admin, lms::AuthService& auth, lms::AssignmentS
     admin.enrolStudent(*adminUser, course.getId(), s2->getId());
     assignments.createAssignment(*lec, course.getId(), "Assignment 1",
                                  clock.now().plusSeconds(7LL * 24 * 3600), 100);
-    (void)submissions;
 }
 
 }  // namespace
@@ -96,7 +94,7 @@ int main(int argc, char** argv) {
                 std::cerr << "--seed-demo needs an empty database.\n";
                 return 2;
             }
-            seedDemo(admin, auth, assignments, submissions, clock);
+            seedDemo(admin, auth, assignments, clock);
             std::cout << "Demo data created. Logins: admin/Admin12345, hod/Hod123456, "
                          "lecturer/Lect123456, student1/Stud123456, student2/Stud123456\n";
         }
