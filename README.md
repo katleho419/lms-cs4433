@@ -18,6 +18,11 @@ Without --seed-demo, the program asks you to create the first administrator.
 WARNING: the demo accounts have passwords that are published here. Use --seed-demo only for testing and demonstrations,
 never on a real installation. The database file is created readable by its owner only.
 
+## Installing and using
+- Technician: `docs/INSTALLATION_GUIDE.md` (with the deployment diagram `docs/diagrams/deployment.png`)
+- Users, by role: `docs/USER_MANUAL.md`
+- What is in this version and what is not: `docs/RELEASE_NOTES.md`
+
 ## Layout
 - src/domain   entities, polymorphic User, Strategy penalty policies, UserFactory
 - src/data     Database wrapper, Repository interfaces and SQLite implementations (parameterised queries only)

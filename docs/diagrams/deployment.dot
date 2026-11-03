@@ -1,0 +1,33 @@
+// UML deployment diagram of the Moderated LMS (Graphviz source).
+// Render: dot -Tsvg deployment.dot -o deployment.svg   and   dot -Tpng -Gdpi=160 deployment.dot -o deployment.png
+digraph deployment {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=12, nodesep=0.5, ranksep=0.7, compound=true, pad=0.3,
+         label="Deployment diagram: Moderated LMS, single school computer (version 1.0.0)\n", labelloc=t];
+  node  [fontname="Helvetica", fontsize=11];
+  edge  [fontname="Helvetica", fontsize=10];
+
+  // Node: the school computer
+  subgraph cluster_pc {
+    label="«device»\nSchool computer (Linux, e.g. Ubuntu 24.04 LTS)\n{no special hardware; a login uses about 40 MB of memory}";
+    style="filled"; fillcolor="#f4f7fb"; color="#33507a"; fontsize=12;
+
+    subgraph cluster_os {
+      label="«executionEnvironment»\nLinux operating system + terminal"; style="filled"; fillcolor="#ffffff"; color="#6b7f99";
+
+      lms [shape=component, style=filled, fillcolor="#dcebff", label="«artifact»\nlms\n(executable, /opt/lms/bin/lms)"];
+      sqlite [shape=component, style=filled, fillcolor="#eeeeee", label="«artifact»\nlibsqlite3.so.0\n(SQLite 3.31 or newer)"];
+      ssl [shape=component, style=filled, fillcolor="#eeeeee", label="«artifact»\nlibcrypto.so.3\n(OpenSSL 3.0 or newer, scrypt)"];
+      db [shape=cylinder, style=filled, fillcolor="#fff2cc", label="«artifact»\nlms.db\n(data file, owner-only 0600,\n/var/lib/lms/lms.db)"];
+      term [shape=box, style="rounded,filled", fillcolor="#e2f0d9", label="«executionEnvironment»\nTerminal session\n(student, lecturer, head of\ndepartment, administrator)"];
+    }
+  }
+
+  // Node: backup medium
+  backup [shape=box3d, style=filled, fillcolor="#fde9d9", label="«device»\nBackup disk or USB stick\n\n«artifact»\nlms-YYYY-MM-DD.db\n(copy of lms.db)"];
+
+  term -> lms [label="keyboard and screen\n(standard input / output)", arrowhead=none];
+  lms -> sqlite [label="«use»", style=dashed, arrowhead=vee];
+  lms -> ssl [label="«use»", style=dashed, arrowhead=vee];
+  lms -> db [label="«use»\nSQL through SQLite\n(local file access, no network)", arrowhead=vee];
+  db -> backup [label="copy while the\nprogram is stopped", style=dashed, arrowhead=vee, constraint=true];
+}
