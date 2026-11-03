@@ -1,0 +1,20 @@
+# Defect Log
+
+Severity scale: Critical (data loss, security breach, crash, wrong marks released), High (a business rule or use case flow
+fails, no workaround), Medium (partly works or a workaround exists), Low (cosmetic).
+TG = a gap in the tests found while checking them (not a fault in the software).
+
+| ID | Found by | Date | Description | Severity | Cause | Fix | Retest |
+|---|---|---|---|---|---|---|---|
+| DEF-01 | Integration test `UC03_BR05.StudentsNeverReceiveAMarkOrFeedbackBeforeRelease` | 2026-11-02 | The student's assignment list (`SubmissionService::assignmentsFor`) returned the raw mark, final mark and feedback of marked and moderated work, which breaks BR-05 (students never see a mark until it is released). | High | BR-05 was enforced only in the console screen, which checked the status before printing. The service returned the stored record unchanged, so any other client of the service layer would see unreleased marks. The shipped console did not display them, which is why the severity is High and not Critical. | Added `Submission::redactedForStudent()`: until the work is released it removes marks and feedback and shows only Submitted or Late (so progress through marking and moderation is not revealed either). `assignmentsFor` now returns only the redacted copy. | Passed: `UC03_BR05` (3 tests), `Submission.RedactedCopy...`; full suite 159/159; scripted console run shows the mark only after release. |
+| DEF-02 | Test design for UC-03 E4, then reproduced with a scratch program | 2026-11-02 | Concurrent change is not detected. The Head of Department reviewed a final mark of 70, the lecturer re-marked it to 40, and approving then moderated 40 without any warning. UC-03 E4 requires that nothing stale is approved. Reproduced: "HoD reviewed 70; system approved final mark 40 with status MODERATED". | High | `approve` and `approveAll` took only the submission id, so they could not tell whether the mark changed after the review. | Added `ModerationService::review`, an optional `reviewedFinalMark` on `approve` (refuses with "changed after you reviewed it"), and `approveReviewed` for approve-all, which skips changed work and reports the count. The console now shows the mark, asks y/n, and passes what was shown. | Passed: `UC03_E4_Concurrency` (3 tests) and `UC03_E5_Moderation` rollback tests; scripted console run (review, confirm, approve, release). |
+| TE-01 | Integration test `Schema.ReleasedSubmissionsCannotBeChangedByAnySqlUpdate` | 2026-11-02 | The test threw a CHECK constraint error before reaching the check it was written for. Not a software defect. | n/a (test error) | The test's setup SQL set status RELEASED without feedback, and the schema correctly requires feedback on marked work. | Corrected the setup statement. | Passed. |
+| TG-01 | Deliberate fault check on the system tests | 2026-11-02 | With the late window changed from "more than 3 days" to "3 days or more", all 45 system tests still passed. No system test marked work exactly 3 days late, so the UC-02 A1/A2 boundary was tested only at unit level. | Medium (test gap) | System tests were written for 1, 2 and 4 days late and missed the last day inside the window. | Added `SYS22b_WorkExactlyThreeDaysLate_StillGetsThirtyPercentPenalty` (80 raw becomes 50). | Fails with the fault, passes without it; full suite 205/205. Fault removed from the source. |
+
+## Notes
+- Defects counted in the software: 2 (both High, both fixed and retested). Test script errors: 1. Test gaps: 1.
+- System and acceptance testing (46 tests, real console and database) found no new software defect. The two defects above had
+  already been found and fixed at integration level, and SYS31, SYS37 and SYS41 confirm those fixes through the screens.
+  This result is recorded as found; no defect was invented to fill the log.
+- Both defects were found because the tests were written from the use case specifications and business rules, not
+  from the code. Both fixes include regression tests so the faults cannot return unnoticed.
