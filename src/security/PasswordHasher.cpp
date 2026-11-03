@@ -5,6 +5,7 @@
 #include <openssl/rand.h>
 
 #include <cstdint>
+#include <optional>
 #include <sstream>
 #include <vector>
 
@@ -97,6 +98,42 @@ bool parseNumber(const std::string& text, std::uint64_t& out) {
     return true;
 }
 
+// A stored hash, taken apart and checked. Anything that does not look exactly like something this program
+// wrote is rejected before any expensive work is done (also protects against absurd cost parameters).
+struct StoredHash {
+    std::uint64_t n = 0;
+    std::uint64_t r = 0;
+    std::uint64_t p = 0;
+    std::vector<unsigned char> salt;
+    std::vector<unsigned char> expected;
+};
+
+bool costIsAcceptable(std::uint64_t n, std::uint64_t r, std::uint64_t p) {
+    const bool nOk = n >= 1024 && n <= kMaxCost && (n & (n - 1)) == 0;
+    const bool rOk = r >= 1 && r <= kMaxBlockSize;
+    const bool pOk = p >= 1 && p <= kMaxParallelism;
+    return nOk && rOk && pOk;
+}
+
+std::optional<StoredHash> parseStoredHash(const std::string& saltHex, const std::string& stored) {
+    const std::vector<std::string> parts = split(stored, '$');
+    if (parts.size() != 5 || parts[0] != "scrypt") {
+        return std::nullopt;
+    }
+    StoredHash hash;
+    if (!parseNumber(parts[1], hash.n) || !parseNumber(parts[2], hash.r) || !parseNumber(parts[3], hash.p)) {
+        return std::nullopt;
+    }
+    if (!costIsAcceptable(hash.n, hash.r, hash.p)) {
+        return std::nullopt;
+    }
+    if (!fromHex(saltHex, hash.salt) || !fromHex(parts[4], hash.expected) ||
+        hash.expected.size() != kKeyBytes) {
+        return std::nullopt;
+    }
+    return hash;
+}
+
 }  // namespace
 
 std::string PasswordHasher::generateSalt() {
@@ -121,35 +158,15 @@ std::string PasswordHasher::hash(const std::string& plain, const std::string& sa
 }
 
 bool PasswordHasher::verify(const std::string& plain, const std::string& saltHex, const std::string& stored) {
-    const std::vector<std::string> parts = split(stored, '$');
-    if (parts.size() != 5 || parts[0] != "scrypt") {
+    const std::optional<StoredHash> hash = parseStoredHash(saltHex, stored);
+    if (!hash) {
         return false;
     }
-
-    std::uint64_t n = 0;
-    std::uint64_t r = 0;
-    std::uint64_t p = 0;
-    if (!parseNumber(parts[1], n) || !parseNumber(parts[2], r) || !parseNumber(parts[3], p)) {
-        return false;
-    }
-    if (n < 1024 || n > kMaxCost || (n & (n - 1)) != 0) {
-        return false;
-    }
-    if (r < 1 || r > kMaxBlockSize || p < 1 || p > kMaxParallelism) {
-        return false;
-    }
-
-    std::vector<unsigned char> salt;
-    std::vector<unsigned char> expected;
-    if (!fromHex(saltHex, salt) || !fromHex(parts[4], expected) || expected.size() != kKeyBytes) {
-        return false;
-    }
-
     std::vector<unsigned char> actual;
-    if (!deriveKey(plain, salt, n, r, p, actual)) {
+    if (!deriveKey(plain, hash->salt, hash->n, hash->r, hash->p, actual)) {
         return false;
     }
-    return CRYPTO_memcmp(actual.data(), expected.data(), kKeyBytes) == 0;
+    return CRYPTO_memcmp(actual.data(), hash->expected.data(), kKeyBytes) == 0;
 }
 
 }  // namespace lms

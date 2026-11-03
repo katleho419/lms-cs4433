@@ -49,6 +49,9 @@ jobs:
         run: |
           cppcheck --enable=warning,style,performance,portability --std=c++17 --inline-suppr --suppress=missingIncludeSystem --error-exitcode=1 -I src src 2> cppcheck.txt || { cat cppcheck.txt; exit 1; }
 
+      - name: Metrics (fails if a function has complexity above 15 or more than 100 lines)
+        run: python3 tools/metrics.py --out metrics.md
+
       - name: Upload analysis reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,4 +60,5 @@ jobs:
           path: |
             clang-tidy.txt
             cppcheck.txt
+            metrics.md
           if-no-files-found: ignore
