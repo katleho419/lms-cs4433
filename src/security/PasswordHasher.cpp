@@ -120,18 +120,19 @@ std::optional<StoredHash> parseStoredHash(const std::string& saltHex, const std:
     if (parts.size() != 5 || parts[0] != "scrypt") {
         return std::nullopt;
     }
-    StoredHash hash;
-    if (!parseNumber(parts[1], hash.n) || !parseNumber(parts[2], hash.r) || !parseNumber(parts[3], hash.p)) {
+    StoredHash result;
+    if (!parseNumber(parts[1], result.n) || !parseNumber(parts[2], result.r) ||
+        !parseNumber(parts[3], result.p)) {
         return std::nullopt;
     }
-    if (!costIsAcceptable(hash.n, hash.r, hash.p)) {
+    if (!costIsAcceptable(result.n, result.r, result.p)) {
         return std::nullopt;
     }
-    if (!fromHex(saltHex, hash.salt) || !fromHex(parts[4], hash.expected) ||
-        hash.expected.size() != kKeyBytes) {
+    if (!fromHex(saltHex, result.salt) || !fromHex(parts[4], result.expected) ||
+        result.expected.size() != kKeyBytes) {
         return std::nullopt;
     }
-    return hash;
+    return result;
 }
 
 }  // namespace
@@ -158,15 +159,15 @@ std::string PasswordHasher::hash(const std::string& plain, const std::string& sa
 }
 
 bool PasswordHasher::verify(const std::string& plain, const std::string& saltHex, const std::string& stored) {
-    const std::optional<StoredHash> hash = parseStoredHash(saltHex, stored);
-    if (!hash) {
+    const std::optional<StoredHash> parsed = parseStoredHash(saltHex, stored);
+    if (!parsed) {
         return false;
     }
     std::vector<unsigned char> actual;
-    if (!deriveKey(plain, hash->salt, hash->n, hash->r, hash->p, actual)) {
+    if (!deriveKey(plain, parsed->salt, parsed->n, parsed->r, parsed->p, actual)) {
         return false;
     }
-    return CRYPTO_memcmp(actual.data(), hash->expected.data(), kKeyBytes) == 0;
+    return CRYPTO_memcmp(actual.data(), parsed->expected.data(), kKeyBytes) == 0;
 }
 
 }  // namespace lms
