@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build libsqlite3-dev libssl-dev libgtest-dev
+
+      - name: Configure (warnings are errors, coverage on)
+        run: cmake -S . -B build -G Ninja -DLMS_WARNINGS_AS_ERRORS=ON -DLMS_BUILD_TESTS=ON -DLMS_ENABLE_COVERAGE=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Coverage report (fails below 70% in the business-logic layer)
+        run: python3 tools/coverage.py build
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/coverage_report.md
