@@ -8,9 +8,9 @@ const char* const kSelectAudit =
     "SELECT id, submission_id, changed_by, changed_at, old_value, new_value, reason FROM audit_entry ";
 
 AuditEntry toEntry(const Statement& row) {
-    return AuditEntry(row.columnInt(0), row.columnInt(1), row.columnInt(2),
-                      DateTime::parseIso(row.columnText(3)), row.columnOptionalInt(4), row.columnInt(5),
-                      row.columnText(6));
+    return {
+        row.columnInt(0),         row.columnInt(1), row.columnInt(2), DateTime::parseIso(row.columnText(3)),
+        row.columnOptionalInt(4), row.columnInt(5), row.columnText(6)};
 }
 
 }  // namespace
@@ -18,7 +18,9 @@ AuditEntry toEntry(const Statement& row) {
 std::optional<AuditEntry> SqliteAuditRepository::findById(int id) const {
     Statement query(db_, std::string(kSelectAudit) + "WHERE id = ?");
     query.bind(1, id);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toEntry(query);
 }
 
@@ -26,12 +28,16 @@ std::vector<AuditEntry> SqliteAuditRepository::findBySubmission(int submissionId
     Statement query(db_, std::string(kSelectAudit) + "WHERE submission_id = ? ORDER BY changed_at, id");
     query.bind(1, submissionId);
     std::vector<AuditEntry> entries;
-    while (query.step()) entries.push_back(toEntry(query));
+    while (query.step()) {
+        entries.push_back(toEntry(query));
+    }
     return entries;
 }
 
 void SqliteAuditRepository::save(AuditEntry& entry) {
-    if (entry.getId() != 0) throw BusinessRuleError("Audit entries cannot be changed once written.");
+    if (entry.getId() != 0) {
+        throw BusinessRuleError("Audit entries cannot be changed once written.");
+    }
     Statement insert(db_,
                      "INSERT INTO audit_entry (submission_id, changed_by, changed_at, old_value, "
                      "new_value, reason) VALUES (?, ?, ?, ?, ?, ?)");

@@ -1,6 +1,7 @@
 #include "service/ModerationService.hpp"
 
 #include "service/AccessControl.hpp"
+#include "service/TransactionResult.hpp"
 #include "util/Errors.hpp"
 #include "util/Validation.hpp"
 
@@ -8,14 +9,18 @@ namespace lms {
 
 Assignment ModerationService::requireAssignmentInDepartment(const User& hod, int assignmentId) const {
     const std::optional<Assignment> assignment = assignments_.findById(assignmentId);
-    if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+    if (!assignment) {
+        throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+    }
     access_.requireHodOf(hod, access_.requireCourse(assignment->getCourseId()));
     return *assignment;
 }
 
 Submission ModerationService::loadForHod(const User& hod, int submissionId) const {
     const std::optional<Submission> submission = submissions_.findById(submissionId);
-    if (!submission) throw NotFoundError("There is no submission with id " + std::to_string(submissionId) + ".");
+    if (!submission) {
+        throw NotFoundError("There is no submission with id " + std::to_string(submissionId) + ".");
+    }
     requireAssignmentInDepartment(hod, submission->getAssignmentId());
     return *submission;
 }
@@ -47,14 +52,16 @@ Submission ModerationService::adjustMark(const User& hod, int submissionId, int 
         requireRange(newMark, "The mark", 0, assignment.getMaxMark());
 
         const std::optional<int> oldMark = submission.getFinalMark();
-        if (oldMark && *oldMark == newMark) throw ValidationError("The new mark is the same as the current mark.");
+        if (oldMark && *oldMark == newMark) {
+            throw ValidationError("The new mark is the same as the current mark.");
+        }
 
         submission.adjustFinalMark(newMark);  // only MARKED or MODERATED work
         submissions_.save(submission);
         audit_.record(submission.getId(), hod.getId(), oldMark, newMark, why);
         result = submission;
     });
-    return *result;
+    return takeResult(result);
 }
 
 Submission ModerationService::review(const User& hod, int submissionId) const {
@@ -62,7 +69,8 @@ Submission ModerationService::review(const User& hod, int submissionId) const {
     return loadForHod(hod, submissionId);
 }
 
-Submission ModerationService::approve(const User& hod, int submissionId, std::optional<int> reviewedFinalMark) {
+Submission ModerationService::approve(const User& hod, int submissionId,
+                                      std::optional<int> reviewedFinalMark) {
     requirePermission(hod, Permission::ModerateMarks, "approve marks");
     std::optional<Submission> result;
     unitOfWork_.runInTransaction([&] {
@@ -73,7 +81,8 @@ Submission ModerationService::approve(const User& hod, int submissionId, std::op
                                     toString(submission.getStatus()) + ").");
         }
         if (reviewedFinalMark && submission.getFinalMark() != reviewedFinalMark) {
-            throw BusinessRuleError("This mark was changed after you reviewed it. Reload and review it again.");
+            throw BusinessRuleError(
+                "This mark was changed after you reviewed it. Reload and review it again.");
         }
         submission.transitionTo(SubmissionStatus::Moderated);
         submissions_.save(submission);
@@ -81,7 +90,7 @@ Submission ModerationService::approve(const User& hod, int submissionId, std::op
         audit_.record(submission.getId(), hod.getId(), finalMark, finalMark, "Approved at moderation");
         result = submission;
     });
-    return *result;
+    return takeResult(result);
 }
 
 int ModerationService::approveAll(const User& hod, int assignmentId) {
@@ -90,7 +99,9 @@ int ModerationService::approveAll(const User& hod, int assignmentId) {
     unitOfWork_.runInTransaction([&] {
         requireAssignmentInDepartment(hod, assignmentId);
         for (Submission submission : submissions_.findCurrentByAssignment(assignmentId)) {
-            if (submission.getStatus() != SubmissionStatus::Marked) continue;
+            if (submission.getStatus() != SubmissionStatus::Marked) {
+                continue;
+            }
             submission.transitionTo(SubmissionStatus::Moderated);
             submissions_.save(submission);
             const int finalMark = *submission.getFinalMark();
@@ -108,7 +119,9 @@ ApproveResult ModerationService::approveReviewed(const User& hod, int assignment
     unitOfWork_.runInTransaction([&] {
         requireAssignmentInDepartment(hod, assignmentId);
         for (Submission submission : submissions_.findCurrentByAssignment(assignmentId)) {
-            if (submission.getStatus() != SubmissionStatus::Marked) continue;
+            if (submission.getStatus() != SubmissionStatus::Marked) {
+                continue;
+            }
             bool unchanged = false;
             for (const ReviewedMark& seen : reviewed) {
                 if (seen.submissionId == submission.getId() && submission.getFinalMark() == seen.finalMark) {
@@ -130,7 +143,8 @@ ApproveResult ModerationService::approveReviewed(const User& hod, int assignment
     return outcome;
 }
 
-Submission ModerationService::returnToLecturer(const User& hod, int submissionId, const std::string& comment) {
+Submission ModerationService::returnToLecturer(const User& hod, int submissionId,
+                                               const std::string& comment) {
     requirePermission(hod, Permission::ModerateMarks, "return work to the lecturer");
     const std::string why = "Returned to lecturer: " + requireText(comment, "The comment", 450);
 
@@ -148,7 +162,7 @@ Submission ModerationService::returnToLecturer(const User& hod, int submissionId
         audit_.record(submission.getId(), hod.getId(), finalMark, finalMark, why);
         result = submission;
     });
-    return *result;
+    return takeResult(result);
 }
 
 ReleaseResult ModerationService::release(const User& hod, int assignmentId) {

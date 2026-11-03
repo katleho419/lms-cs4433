@@ -81,7 +81,9 @@ class TransactionScope {
 public:
     explicit TransactionScope(Database& db) : db_(db) { db_.enterTransaction(); }
     ~TransactionScope() {
-        if (!finished_) db_.abortTransaction();
+        if (!finished_) {
+            db_.abortTransaction();
+        }
     }
     TransactionScope(const TransactionScope&) = delete;
     TransactionScope& operator=(const TransactionScope&) = delete;

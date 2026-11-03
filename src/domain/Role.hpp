@@ -2,13 +2,14 @@
 #ifndef LMS_DOMAIN_ROLE_HPP
 #define LMS_DOMAIN_ROLE_HPP
 
+#include <cstdint>
 #include <string>
 
 namespace lms {
 
-enum class Role { Admin, Lecturer, Hod, Student };
+enum class Role : std::uint8_t { Admin, Lecturer, Hod, Student };
 
-enum class Permission {
+enum class Permission : std::uint8_t {
     ManageAccounts,
     ManageDepartments,
     ManageCourses,

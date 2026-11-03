@@ -8,21 +8,36 @@ namespace lms {
 
 std::string toString(SubmissionStatus status) {
     switch (status) {
-        case SubmissionStatus::Submitted: return "SUBMITTED";
-        case SubmissionStatus::Late: return "LATE";
-        case SubmissionStatus::Marked: return "MARKED";
-        case SubmissionStatus::Moderated: return "MODERATED";
-        case SubmissionStatus::Released: return "RELEASED";
+        case SubmissionStatus::Submitted:
+            return "SUBMITTED";
+        case SubmissionStatus::Late:
+            return "LATE";
+        case SubmissionStatus::Marked:
+            return "MARKED";
+        case SubmissionStatus::Moderated:
+            return "MODERATED";
+        case SubmissionStatus::Released:
+            return "RELEASED";
     }
     throw ValidationError("Unknown submission status.");
 }
 
 SubmissionStatus submissionStatusFromString(const std::string& text) {
-    if (text == "SUBMITTED") return SubmissionStatus::Submitted;
-    if (text == "LATE") return SubmissionStatus::Late;
-    if (text == "MARKED") return SubmissionStatus::Marked;
-    if (text == "MODERATED") return SubmissionStatus::Moderated;
-    if (text == "RELEASED") return SubmissionStatus::Released;
+    if (text == "SUBMITTED") {
+        return SubmissionStatus::Submitted;
+    }
+    if (text == "LATE") {
+        return SubmissionStatus::Late;
+    }
+    if (text == "MARKED") {
+        return SubmissionStatus::Marked;
+    }
+    if (text == "MODERATED") {
+        return SubmissionStatus::Moderated;
+    }
+    if (text == "RELEASED") {
+        return SubmissionStatus::Released;
+    }
     throw ValidationError("Unknown submission status: " + text);
 }
 
@@ -46,8 +61,6 @@ void Submission::transitionTo(SubmissionStatus next) {
     bool allowed = false;
     switch (status_) {
         case S::Submitted:
-            allowed = (next == S::Marked);
-            break;
         case S::Late:
             allowed = (next == S::Marked);
             break;
@@ -88,10 +101,12 @@ void Submission::returnForRemarking() {
 }
 
 Submission Submission::redactedForStudent() const {
-    if (isVisibleToStudent()) return *this;
+    if (isVisibleToStudent()) {
+        return *this;
+    }
     const SubmissionStatus shown = lateDays_ == 0 ? SubmissionStatus::Submitted : SubmissionStatus::Late;
-    return Submission(id_, assignmentId_, studentId_, version_, content_, submittedAt_, shown, lateDays_,
-                      std::nullopt, std::nullopt, "");
+    return {id_,   assignmentId_, studentId_,   version_,     content_, submittedAt_,
+            shown, lateDays_,     std::nullopt, std::nullopt, ""};
 }
 
 bool Submission::canResubmit(const DateTime& now, const DateTime& effectiveDeadline) const {

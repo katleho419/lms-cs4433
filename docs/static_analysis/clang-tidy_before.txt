@@ -1,0 +1,1269 @@
+src/app/main.cpp:29:5: warning: variable 'a' of type 'UserData' can be declared 'const' [misc-const-correctness]
+   29 |     UserData a{"admin", "Demo Administrator", "Admin12345", "", 0};
+      |     ^
+      |              const 
+src/app/main.cpp:30:5: warning: variable 'adminUser' of type 'UserPtr' (aka 'shared_ptr<User>') can be declared 'const' [misc-const-correctness]
+   30 |     UserPtr adminUser = auth.createInitialAdministrator(a);
+      |     ^
+      |             const 
+src/app/main.cpp:33:5: warning: variable 'hod' of type 'UserPtr' (aka 'shared_ptr<User>') can be declared 'const' [misc-const-correctness]
+   33 |     UserPtr hod = admin.createUser(*adminUser, Role::Hod, {"hod", "Dr Head", "Hod123456", "", dep.getId()});
+      |     ^
+      |             const 
+src/app/main.cpp:34:5: warning: variable 'lec' of type 'UserPtr' (aka 'shared_ptr<User>') can be declared 'const' [misc-const-correctness]
+   34 |     UserPtr lec = admin.createUser(*adminUser, Role::Lecturer, {"lecturer", "Ms Lecturer", "Lect123456", "", dep.getId()});
+      |     ^
+      |             const 
+src/app/main.cpp:35:5: warning: variable 's1' of type 'UserPtr' (aka 'shared_ptr<User>') can be declared 'const' [misc-const-correctness]
+   35 |     UserPtr s1 = admin.createUser(*adminUser, Role::Student, {"student1", "Thabo Student", "Stud123456", "S0001", 0});
+      |     ^
+      |             const 
+src/app/main.cpp:36:5: warning: variable 's2' of type 'UserPtr' (aka 'shared_ptr<User>') can be declared 'const' [misc-const-correctness]
+   36 |     UserPtr s2 = admin.createUser(*adminUser, Role::Student, {"student2", "Palesa Student", "Stud123456", "S0002", 0});
+      |     ^
+      |             const 
+src/app/main.cpp:41:58: warning: performing an implicit widening conversion to type 'std::int64_t' (aka 'long') of a multiplication performed in type 'int' [bugprone-implicit-widening-of-multiplication-result]
+   41 |                                  clock.now().plusSeconds(7 * 24 * 3600), 100);
+      |                                                          ^
+src/app/main.cpp:41:58: note: make conversion explicit to silence this warning
+    2 |                                  clock.now().plusSeconds(7 * 24 * 3600), 100);
+      |                                                          ^~~~~~~~~~~~~
+      |                                                          static_cast<std::int64_t>( )
+src/app/main.cpp:41:58: note: perform multiplication in a wider type
+   41 |                                  clock.now().plusSeconds(7 * 24 * 3600), 100);
+      |                                                          ^~~~~~
+      |                                                          static_cast<std::int64_t>( )
+src/app/main.cpp:71:9: warning: variable 'system' of type 'lms::SystemClock' can be declared 'const' [misc-const-correctness]
+   71 |         lms::SystemClock system;
+      |         ^
+      |                          const 
+src/app/main.cpp:79:9: warning: variable 'penalty' of type 'lms::DailyPercentPenalty' can be declared 'const' [misc-const-correctness]
+   79 |         lms::DailyPercentPenalty penalty(10, 3);
+      |         ^
+      |                                  const 
+src/data/Database.cpp:53:24: warning: statement should be inside braces [readability-braces-around-statements]
+   53 |     if (db_ != nullptr) sqlite3_close(db_);
+      |                        ^                   
+      |                         {
+src/data/Database.cpp:95:20: warning: statement should be inside braces [readability-braces-around-statements]
+   95 |     if (depth_ > 0) --depth_;
+      |                    ^         
+      |                     {
+src/data/Database.cpp:142:26: warning: statement should be inside braces [readability-braces-around-statements]
+  142 |     if (rc == SQLITE_ROW) return true;
+      |                          ^            
+      |                           {
+src/data/Database.cpp:143:27: warning: statement should be inside braces [readability-braces-around-statements]
+  143 |     if (rc == SQLITE_DONE) return false;
+      |                           ^             
+      |                            {
+src/data/Database.cpp:162:30: warning: statement should be inside braces [readability-braces-around-statements]
+  162 |     if (columnIsNull(column)) return std::nullopt;
+      |                              ^                    
+      |                               {
+src/data/Database.hpp:84:24: warning: statement should be inside braces [readability-braces-around-statements]
+   84 |         if (!finished_) db_.abortTransaction();
+      |                        ^                       
+      |                         {
+src/data/SqliteAssignmentRepository.cpp:10:12: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   10 |     return Assignment(row.columnInt(0), row.columnInt(1), row.columnText(2),
+      |            ^~~~~~~~~~~
+      |            {
+   11 |                       DateTime::parseIso(row.columnText(3)), row.columnInt(4));
+      |                                                                              ~
+      |                                                                              }
+src/data/SqliteAssignmentRepository.cpp:15:12: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   15 |     return Extension(row.columnInt(0), row.columnInt(1), row.columnInt(2),
+      |            ^~~~~~~~~~
+      |            {
+   16 |                      DateTime::parseIso(row.columnText(3)), row.columnInt(4));
+      |                                                                             ~
+      |                                                                             }
+src/data/SqliteAssignmentRepository.cpp:24:23: warning: statement should be inside braces [readability-braces-around-statements]
+   24 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteAssignmentRepository.cpp:32:25: warning: statement should be inside braces [readability-braces-around-statements]
+   32 |     while (query.step()) assignments.push_back(toAssignment(query));
+      |                         ^                                           
+      |                          {
+src/data/SqliteAssignmentRepository.cpp:62:23: warning: statement should be inside braces [readability-braces-around-statements]
+   62 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteAssignmentRepository.cpp:78:16: warning: statement should be inside braces [readability-braces-around-statements]
+   78 |     if (stored) extension.assignId(stored->getId());
+      |                ^                                    
+      |                 {
+src/data/SqliteAuditRepository.cpp:11:12: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   11 |     return AuditEntry(row.columnInt(0), row.columnInt(1), row.columnInt(2),
+      |            ^~~~~~~~~~~
+      |            {
+   12 |                       DateTime::parseIso(row.columnText(3)), row.columnOptionalInt(4), row.columnInt(5),
+   13 |                       row.columnText(6));
+      |                                        ~
+      |                                        }
+src/data/SqliteAuditRepository.cpp:21:23: warning: statement should be inside braces [readability-braces-around-statements]
+   21 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteAuditRepository.cpp:29:25: warning: statement should be inside braces [readability-braces-around-statements]
+   29 |     while (query.step()) entries.push_back(toEntry(query));
+      |                         ^                                  
+      |                          {
+src/data/SqliteAuditRepository.cpp:34:28: warning: statement should be inside braces [readability-braces-around-statements]
+   34 |     if (entry.getId() != 0) throw BusinessRuleError("Audit entries cannot be changed once written.");
+      |                            ^                                                                         
+      |                             {
+src/data/SqliteOrgRepository.cpp:11:12: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   11 |     return Course(row.columnInt(0), row.columnText(1), row.columnText(2), row.columnInt(3));
+      |            ^~~~~~~                                                                        ~
+      |            {                                                                              }
+src/data/SqliteOrgRepository.cpp:14:56: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   14 | Department toDepartment(const Statement& row) { return Department(row.columnInt(0), row.columnText(1)); }
+      |                                                        ^~~~~~~~~~~                                   ~
+      |                                                        {                                             }
+src/data/SqliteOrgRepository.cpp:18:25: warning: statement should be inside braces [readability-braces-around-statements]
+   18 |     while (query.step()) courses.push_back(toCourse(query));
+      |                         ^                                   
+      |                          {
+src/data/SqliteOrgRepository.cpp:29:23: warning: statement should be inside braces [readability-braces-around-statements]
+   29 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteOrgRepository.cpp:36:23: warning: statement should be inside braces [readability-braces-around-statements]
+   36 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteOrgRepository.cpp:43:25: warning: statement should be inside braces [readability-braces-around-statements]
+   43 |     while (query.step()) departments.push_back(toDepartment(query));
+      |                         ^                                           
+      |                          {
+src/data/SqliteOrgRepository.cpp:65:23: warning: statement should be inside braces [readability-braces-around-statements]
+   65 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteOrgRepository.cpp:72:23: warning: statement should be inside braces [readability-braces-around-statements]
+   72 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteOrgRepository.cpp:147:25: warning: statement should be inside braces [readability-braces-around-statements]
+  147 |     while (query.step()) ids.push_back(query.columnInt(0));
+      |                         ^                                  
+      |                          {
+src/data/SqliteSubmissionRepository.cpp:17:12: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   17 |     return Submission(row.columnInt(0), row.columnInt(1), row.columnInt(2), row.columnInt(3),
+      |            ^~~~~~~~~~~
+      |            {
+   18 |                       row.columnText(4), DateTime::parseIso(row.columnText(5)),
+   19 |                       submissionStatusFromString(row.columnText(6)), row.columnInt(7),
+   20 |                       row.columnOptionalInt(8), row.columnOptionalInt(9), row.columnText(10));
+      |                                                                                             ~
+      |                                                                                             }
+src/data/SqliteSubmissionRepository.cpp:25:25: warning: statement should be inside braces [readability-braces-around-statements]
+   25 |     while (query.step()) submissions.push_back(toSubmission(query));
+      |                         ^                                           
+      |                          {
+src/data/SqliteSubmissionRepository.cpp:34:23: warning: statement should be inside braces [readability-braces-around-statements]
+   34 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteSubmissionRepository.cpp:57:23: warning: statement should be inside braces [readability-braces-around-statements]
+   57 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteUserRepository.cpp:27:12: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   27 |     return UserPtr(UserFactory::restore(record));
+      |            ^
+src/data/SqliteUserRepository.cpp:35:23: warning: statement should be inside braces [readability-braces-around-statements]
+   35 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteUserRepository.cpp:43:23: warning: statement should be inside braces [readability-braces-around-statements]
+   43 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteUserRepository.cpp:58:23: warning: statement should be inside braces [readability-braces-around-statements]
+   58 |     if (!query.step()) return std::nullopt;
+      |                       ^                    
+      |                        {
+src/data/SqliteUserRepository.cpp:65:25: warning: statement should be inside braces [readability-braces-around-statements]
+   65 |     while (query.step()) users.push_back(toUser(query));
+      |                         ^                               
+      |                          {
+src/data/SqliteUserRepository.cpp:108:20: warning: statement should be inside braces [readability-braces-around-statements]
+  108 |     if (newId != 0) user->assignId(newId);
+      |                    ^                      
+      |                     {
+src/domain/PenaltyPolicies.cpp:11:22: warning: statement should be inside braces [readability-braces-around-statements]
+   11 |     if (maxMark <= 0) throw ValidationError("The maximum mark must be positive.");
+      |                      ^                                                            
+      |                       {
+src/domain/PenaltyPolicies.cpp:15:22: warning: statement should be inside braces [readability-braces-around-statements]
+   15 |     if (lateDays < 0) throw ValidationError("Late days cannot be negative.");
+      |                      ^                                                       
+      |                       {
+src/domain/PenaltyPolicies.cpp:25:25: warning: statement should be inside braces [readability-braces-around-statements]
+   25 |     if (maxLateDays < 0) throw ValidationError("The late window cannot be negative.");
+      |                         ^                                                             
+      |                          {
+src/domain/PenaltyPolicies.cpp:30:23: warning: statement should be inside braces [readability-braces-around-statements]
+   30 |     if (lateDays == 0) return rawMark;
+      |                       ^               
+      |                        {
+src/domain/PenaltyPolicies.cpp:31:33: warning: statement should be inside braces [readability-braces-around-statements]
+   31 |     if (lateDays > maxLateDays_) return 0;
+      |                                 ^         
+      |                                  {
+src/domain/Role.cpp:18:25: warning: statement should be inside braces [readability-braces-around-statements]
+   18 |     if (text == "ADMIN") return Role::Admin;
+      |                         ^                   
+      |                          {
+src/domain/Role.cpp:19:28: warning: statement should be inside braces [readability-braces-around-statements]
+   19 |     if (text == "LECTURER") return Role::Lecturer;
+      |                            ^                      
+      |                             {
+src/domain/Role.cpp:20:23: warning: statement should be inside braces [readability-braces-around-statements]
+   20 |     if (text == "HOD") return Role::Hod;
+      |                       ^                 
+      |                        {
+src/domain/Role.cpp:21:27: warning: statement should be inside braces [readability-braces-around-statements]
+   21 |     if (text == "STUDENT") return Role::Student;
+      |                           ^                     
+      |                            {
+src/domain/Role.hpp:9:12: warning: enum 'Role' uses a larger base type ('int', size: 4 bytes) than necessary for its value set, consider using 'std::uint8_t' (1 byte) as the base type to reduce its size [performance-enum-size]
+    9 | enum class Role { Admin, Lecturer, Hod, Student };
+      |            ^
+src/domain/Role.hpp:11:12: warning: enum 'Permission' uses a larger base type ('int', size: 4 bytes) than necessary for its value set, consider using 'std::uint8_t' (1 byte) as the base type to reduce its size [performance-enum-size]
+   11 | enum class Permission {
+      |            ^
+src/domain/Submission.cpp:21:29: warning: statement should be inside braces [readability-braces-around-statements]
+   21 |     if (text == "SUBMITTED") return SubmissionStatus::Submitted;
+      |                             ^                                   
+      |                              {
+src/domain/Submission.cpp:22:24: warning: statement should be inside braces [readability-braces-around-statements]
+   22 |     if (text == "LATE") return SubmissionStatus::Late;
+      |                        ^                              
+      |                         {
+src/domain/Submission.cpp:23:26: warning: statement should be inside braces [readability-braces-around-statements]
+   23 |     if (text == "MARKED") return SubmissionStatus::Marked;
+      |                          ^                                
+      |                           {
+src/domain/Submission.cpp:24:29: warning: statement should be inside braces [readability-braces-around-statements]
+   24 |     if (text == "MODERATED") return SubmissionStatus::Moderated;
+      |                             ^                                   
+      |                              {
+src/domain/Submission.cpp:25:28: warning: statement should be inside braces [readability-braces-around-statements]
+   25 |     if (text == "RELEASED") return SubmissionStatus::Released;
+      |                            ^                                  
+      |                             {
+src/domain/Submission.cpp:48:9: warning: switch has 2 consecutive identical branches [bugprone-branch-clone]
+   48 |         case S::Submitted:
+      |         ^
+src/domain/Submission.cpp:53:18: note: last of these clones ends here
+   53 |             break;
+      |                  ^
+src/domain/Submission.cpp:91:30: warning: statement should be inside braces [readability-braces-around-statements]
+   91 |     if (isVisibleToStudent()) return *this;
+      |                              ^             
+      |                               {
+src/domain/Submission.cpp:93:12: warning: avoid repeating the return type from the declaration; use a braced initializer list instead [modernize-return-braced-init-list]
+   93 |     return Submission(id_, assignmentId_, studentId_, version_, content_, submittedAt_, shown, lateDays_,
+      |            ^~~~~~~~~~~
+      |            {
+   94 |                       std::nullopt, std::nullopt, "");
+      |                                                     ~
+      |                                                     }
+src/domain/Submission.hpp:14:12: warning: enum 'SubmissionStatus' uses a larger base type ('int', size: 4 bytes) than necessary for its value set, consider using 'std::uint8_t' (1 byte) as the base type to reduce its size [performance-enum-size]
+   14 | enum class SubmissionStatus { Submitted, Late, Marked, Moderated, Released };
+      |            ^
+src/domain/User.cpp:32:38: warning: statement should be inside braces [readability-braces-around-statements]
+   32 |     if (!verifyPassword(oldPassword)) throw AuthenticationError("The current password is not correct.");
+      |                                      ^                                                                  
+      |                                       {
+src/domain/UserFactory.cpp:17:10: warning: variable 'c' of type 'char' can be declared 'const' [misc-const-correctness]
+   17 |     for (char c : username) {
+      |          ^
+      |               const 
+src/domain/UserFactory.cpp:18:15: warning: use auto when initializing with a cast to avoid duplicating the type name [modernize-use-auto]
+   18 |         const unsigned char u = static_cast<unsigned char>(c);
+      |               ^~~~~~~~~~~~~
+      |               auto
+src/domain/UserFactory.cpp:19:13: warning: boolean expression can be simplified by DeMorgan's theorem [readability-simplify-boolean-expr]
+   19 |         if (!(std::isalnum(u) || c == '_' || c == '.' || c == '-')) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |             !                 &&   !=     &&   !=     &&   !=
+src/domain/UserFactory.cpp:19:15: warning: implicit conversion 'int' -> 'bool' [readability-implicit-bool-conversion]
+   19 |         if (!(std::isalnum(u) || c == '_' || c == '.' || c == '-')) {
+      |               ^
+      |               (               != 0)
+src/security/PasswordHasher.cpp:32:10: warning: variable 'b' of type 'unsigned char' can be declared 'const' [misc-const-correctness]
+   32 |     for (unsigned char b : bytes) {
+      |          ^
+      |                        const 
+src/security/PasswordHasher.cpp:40:30: warning: statement should be inside braces [readability-braces-around-statements]
+   40 |     if (c >= '0' && c <= '9') return c - '0';
+      |                              ^               
+      |                               {
+src/security/PasswordHasher.cpp:41:30: warning: statement should be inside braces [readability-braces-around-statements]
+   41 |     if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+      |                              ^                    
+      |                               {
+src/security/PasswordHasher.cpp:42:30: warning: statement should be inside braces [readability-braces-around-statements]
+   42 |     if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+      |                              ^                    
+      |                               {
+src/security/PasswordHasher.cpp:47:46: warning: statement should be inside braces [readability-braces-around-statements]
+   47 |     if (text.empty() || text.size() % 2 != 0) return false;
+      |                                              ^             
+      |                                               {
+src/security/PasswordHasher.cpp:52:30: warning: statement should be inside braces [readability-braces-around-statements]
+   52 |         if (hi < 0 || lo < 0) return false;
+      |                              ^             
+      |                               {
+src/security/PasswordHasher.cpp:61:37: warning: performing an implicit widening conversion to type 'std::uint64_t' (aka 'unsigned long') of a multiplication performed in type 'int' [bugprone-implicit-widening-of-multiplication-result]
+   61 |     const std::uint64_t maxMemory = 2 * 128 * n * r + 1024 * 1024;
+      |                                     ^
+src/security/PasswordHasher.cpp:61:37: note: make conversion explicit to silence this warning
+   61 |     const std::uint64_t maxMemory = 2 * 128 * n * r + 1024 * 1024;
+      |                                     ^~~~~~~
+      |                                     static_cast<std::uint64_t>( )
+src/security/PasswordHasher.cpp:61:37: note: perform multiplication in a wider type
+   61 |     const std::uint64_t maxMemory = 2 * 128 * n * r + 1024 * 1024;
+      |                                     ^
+      |                                     static_cast<long>( )
+src/security/PasswordHasher.cpp:61:55: warning: performing an implicit widening conversion to type 'std::uint64_t' (aka 'unsigned long') of a multiplication performed in type 'int' [bugprone-implicit-widening-of-multiplication-result]
+   61 |     const std::uint64_t maxMemory = 2 * 128 * n * r + 1024 * 1024;
+      |                                                       ^
+src/security/PasswordHasher.cpp:61:55: note: make conversion explicit to silence this warning
+    7 |     const std::uint64_t maxMemory = 2 * 128 * n * r + 1024 * 1024;
+      |                                                       ^~~~~~~~~~~
+      |                                                       static_cast<std::uint64_t>( )
+src/security/PasswordHasher.cpp:61:55: note: perform multiplication in a wider type
+   61 |     const std::uint64_t maxMemory = 2 * 128 * n * r + 1024 * 1024;
+      |                                                       ^~~~
+      |                                                       static_cast<long>( )
+src/security/PasswordHasher.cpp:70:44: warning: statement should be inside braces [readability-braces-around-statements]
+   70 |     while (std::getline(stream, part, sep)) parts.push_back(part);
+      |                                            ^                      
+      |                                             {
+src/security/PasswordHasher.cpp:75:41: warning: statement should be inside braces [readability-braces-around-statements]
+   75 |     if (text.empty() || text.size() > 9) return false;
+      |                                         ^             
+      |                                          {
+src/security/PasswordHasher.cpp:77:10: warning: variable 'c' of type 'char' can be declared 'const' [misc-const-correctness]
+   77 |     for (char c : text) {
+      |          ^
+      |               const 
+src/security/PasswordHasher.cpp:78:32: warning: statement should be inside braces [readability-braces-around-statements]
+   78 |         if (c < '0' || c > '9') return false;
+      |                                ^             
+      |                                 {
+src/security/PasswordHasher.cpp:96:33: warning: statement should be inside braces [readability-braces-around-statements]
+   96 |     if (!fromHex(saltHex, salt)) throw LmsError("The salt is not valid hexadecimal.");
+      |                                 ^                                                     
+      |                                  {
+src/security/PasswordHasher.cpp:108:51: warning: statement should be inside braces [readability-braces-around-statements]
+  108 |     if (parts.size() != 5 || parts[0] != "scrypt") return false;
+      |                                                   ^             
+      |                                                    {
+src/security/PasswordHasher.cpp:113:93: warning: statement should be inside braces [readability-braces-around-statements]
+  113 |     if (!parseNumber(parts[1], n) || !parseNumber(parts[2], r) || !parseNumber(parts[3], p)) return false;
+      |                                                                                             ^             
+      |                                                                                              {
+src/security/PasswordHasher.cpp:114:56: warning: statement should be inside braces [readability-braces-around-statements]
+  114 |     if (n < 1024 || n > kMaxCost || (n & (n - 1)) != 0) return false;
+      |                                                        ^             
+      |                                                         {
+src/security/PasswordHasher.cpp:115:68: warning: statement should be inside braces [readability-braces-around-statements]
+  115 |     if (r < 1 || r > kMaxBlockSize || p < 1 || p > kMaxParallelism) return false;
+      |                                                                    ^             
+      |                                                                     {
+src/security/PasswordHasher.cpp:119:97: warning: statement should be inside braces [readability-braces-around-statements]
+  119 |     if (!fromHex(saltHex, salt) || !fromHex(parts[4], expected) || expected.size() != kKeyBytes) return false;
+      |                                                                                                 ^             
+      |                                                                                                  {
+src/security/PasswordHasher.cpp:122:50: warning: statement should be inside braces [readability-braces-around-statements]
+  122 |     if (!deriveKey(plain, salt, n, r, p, actual)) return false;
+      |                                                  ^             
+      |                                                   {
+src/service/AdminService.cpp:17:55: warning: statement should be inside braces [readability-braces-around-statements]
+   17 |         if (!departments_.findById(data.departmentId)) throw NotFoundError("That department does not exist.");
+      |                                                       ^                                                       
+      |                                                        {
+src/service/AdminService.cpp:51:46: warning: statement should be inside braces [readability-braces-around-statements]
+   51 |     if (!departments_.findById(departmentId)) throw NotFoundError("That department does not exist.");
+      |                                              ^                                                       
+      |                                               {
+src/service/AdminService.cpp:52:47: warning: statement should be inside braces [readability-braces-around-statements]
+   52 |     if (courses_.findByCode(course.getCode())) throw ValidationError("A course with that code already exists.");
+      |                                               ^                                                                 
+      |                                                {
+src/service/AdminService.cpp:68:17: warning: statement should be inside braces [readability-braces-around-statements]
+   68 |     if (!course) throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+      |                 ^                                                                                    
+      |                  {
+src/service/AdminService.cpp:81:38: warning: statement should be inside braces [readability-braces-around-statements]
+   81 |     if (!courses_.findById(courseId)) throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+      |                                      ^                                                                                    
+      |                                       {
+src/service/AssignmentService.cpp:17:34: warning: statement should be inside braces [readability-braces-around-statements]
+   17 |     if (deadline <= clock_.now()) throw ValidationError("The deadline must be in the future.");
+      |                                  ^                                                             
+      |                                   {
+src/service/AssignmentService.cpp:44:21: warning: statement should be inside braces [readability-braces-around-statements]
+   44 |     if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+      |                     ^                                                                                            
+      |                      {
+src/service/AuthService.cpp:32:44: warning: statement should be inside braces [readability-braces-around-statements]
+   32 |     if (!(*user)->verifyPassword(password)) throw AuthenticationError(kLoginFailed);
+      |                                            ^                                        
+      |                                             {
+src/service/AuthService.cpp:44:20: warning: statement should be inside braces [readability-braces-around-statements]
+   44 |         if (stored) user = *stored;
+      |                    ^               
+      |                     {
+src/service/AuthService.cpp:50:25: warning: statement should be inside braces [readability-braces-around-statements]
+   50 |     if (!noUsersExist()) throw BusinessRuleError("An administrator already exists.");
+      |                         ^                                                            
+      |                          {
+src/service/CourseService.cpp:9:17: warning: statement should be inside braces [readability-braces-around-statements]
+    9 |     if (!course) throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+      |                 ^                                                                                    
+      |                  {
+src/service/CourseService.cpp:65:10: warning: variable 'id' of type 'int' can be declared 'const' [misc-const-correctness]
+   65 |     for (int id : courses_.studentIdsOf(courseId)) {
+      |          ^
+      |              const 
+src/service/CourseService.cpp:67:21: warning: statement should be inside braces [readability-braces-around-statements]
+   67 |         if (student) students.push_back(*student);
+      |                     ^                             
+      |                      {
+src/service/MarkingService.cpp:12:21: warning: statement should be inside braces [readability-braces-around-statements]
+   12 |     if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+      |                     ^                                                                                            
+      |                      {
+src/service/MarkingService.cpp:25:20: warning: statement should be inside braces [readability-braces-around-statements]
+   25 |         if (!found) throw NotFoundError("There is no submission with id " + std::to_string(submissionId) + ".");
+      |                    ^                                                                                            
+      |                     {
+src/service/MarkingService.cpp:29:25: warning: statement should be inside braces [readability-braces-around-statements]
+   29 |         if (!assignment) throw NotFoundError("The assignment for this submission no longer exists.");
+      |                         ^                                                                            
+      |                          {
+src/service/MarkingService.cpp:50:25: warning: statement should be inside braces [readability-braces-around-statements]
+   50 |         if (why.empty()) why = oldFinal ? "Re-marked after return to lecturer" : "Initial marking";
+      |                         ^                                                                          
+      |                          {
+src/service/MarkingService.cpp:60:13: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+   60 |     return *result;
+      |             ^
+src/service/ModerationService.cpp:11:21: warning: statement should be inside braces [readability-braces-around-statements]
+   11 |     if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+      |                     ^                                                                                            
+      |                      {
+src/service/ModerationService.cpp:18:21: warning: statement should be inside braces [readability-braces-around-statements]
+   18 |     if (!submission) throw NotFoundError("There is no submission with id " + std::to_string(submissionId) + ".");
+      |                     ^                                                                                            
+      |                      {
+src/service/ModerationService.cpp:50:44: warning: statement should be inside braces [readability-braces-around-statements]
+   50 |         if (oldMark && *oldMark == newMark) throw ValidationError("The new mark is the same as the current mark.");
+      |                                            ^                                                                       
+      |                                             {
+src/service/ModerationService.cpp:57:13: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+   57 |     return *result;
+      |             ^
+src/service/ModerationService.cpp:84:13: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+   84 |     return *result;
+      |             ^
+src/service/ModerationService.cpp:93:68: warning: statement should be inside braces [readability-braces-around-statements]
+   93 |             if (submission.getStatus() != SubmissionStatus::Marked) continue;
+      |                                                                    ^         
+      |                                                                     {
+src/service/ModerationService.cpp:111:68: warning: statement should be inside braces [readability-braces-around-statements]
+  111 |             if (submission.getStatus() != SubmissionStatus::Marked) continue;
+      |                                                                    ^         
+      |                                                                     {
+src/service/ModerationService.cpp:151:13: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+  151 |     return *result;
+      |             ^
+src/service/SubmissionService.cpp:11:19: warning: statement should be inside braces [readability-braces-around-statements]
+   11 |     if (late <= 0) return 0;
+      |                   ^         
+      |                    {
+src/service/SubmissionService.cpp:25:31: warning: statement should be inside braces [readability-braces-around-statements]
+   25 |     if (trim(content).empty()) throw ValidationError("The submission must not be empty.");
+      |                               ^                                                           
+      |                                {
+src/service/SubmissionService.cpp:34:25: warning: statement should be inside braces [readability-braces-around-statements]
+   34 |         if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+      |                         ^                                                                                            
+      |                          {
+src/service/SubmissionService.cpp:61:13: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+   61 |     return *saved;
+      |             ^
+src/service/SubmissionService.cpp:70:25: warning: statement should be inside braces [readability-braces-around-statements]
+   70 |             if (current) current = current->redactedForStudent();  // BR-05: no marks before release
+      |                         ^                                                                           
+      |                          {
+src/ui/ConsoleApp.cpp:20:35: warning: statement should be inside braces [readability-braces-around-statements]
+   20 |     if (t.empty() || t.size() > 9) return false;
+      |                                   ^             
+      |                                    {
+src/ui/ConsoleApp.cpp:21:5: warning: variable 'i' of type 'std::size_t' (aka 'unsigned long') can be declared 'const' [misc-const-correctness]
+   21 |     std::size_t i = (t[0] == '-') ? 1 : 0;
+      |     ^
+      |                 const 
+src/ui/ConsoleApp.cpp:22:23: warning: statement should be inside braces [readability-braces-around-statements]
+   22 |     if (i == t.size()) return false;
+      |                       ^             
+      |                        {
+src/ui/ConsoleApp.cpp:24:38: warning: statement should be inside braces [readability-braces-around-statements]
+   24 |         if (t[j] < '0' || t[j] > '9') return false;
+      |                                      ^             
+      |                                       {
+src/ui/ConsoleApp.cpp:58:35: warning: statement should be inside braces [readability-braces-around-statements]
+   58 |         if (parseInt(line, value)) return true;
+      |                                   ^            
+      |                                    {
+src/ui/ConsoleApp.cpp:102:31: warning: statement should be inside braces [readability-braces-around-statements]
+  102 |         if (trim(line) == ".") return true;
+      |                               ^            
+      |                                {
+src/ui/ConsoleApp.cpp:114:18: warning: statement should be inside braces [readability-braces-around-statements]
+  114 |         if (user) return (*user)->getFullName() + " (" + (*user)->getUsername() + ")";
+      |                  ^                                                                    
+      |                   {
+src/ui/ConsoleApp.cpp:115:7: warning: empty catch statements hide issues; to handle exceptions appropriately, consider re-throwing, handling, or avoiding catch altogether [bugprone-empty-catch]
+  115 |     } catch (const LmsError&) {
+      |       ^
+src/ui/ConsoleApp.cpp:122:25: warning: statement should be inside braces [readability-braces-around-statements]
+  122 |     if (courses.empty()) out_ << "  (no courses)\n";
+      |                         ^                           
+      |                          {
+src/ui/ConsoleApp.cpp:130:22: warning: statement should be inside braces [readability-braces-around-statements]
+  130 |     if (list.empty()) out_ << "  (no assignments)\n";
+      |                      ^                               
+      |                       {
+src/ui/ConsoleApp.cpp:138:22: warning: statement should be inside braces [readability-braces-around-statements]
+  138 |     if (list.empty()) out_ << "  (no submissions)\n";
+      |                      ^                               
+      |                       {
+src/ui/ConsoleApp.cpp:142:30: warning: statement should be inside braces [readability-braces-around-statements]
+  142 |         if (sub.getRawMark()) out_ << "  raw " << *sub.getRawMark();
+      |                              ^                                      
+      |                               {
+src/ui/ConsoleApp.cpp:142:52: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+  142 |         if (sub.getRawMark()) out_ << "  raw " << *sub.getRawMark();
+      |                                                    ^
+src/ui/ConsoleApp.cpp:143:32: warning: statement should be inside braces [readability-braces-around-statements]
+  143 |         if (sub.getFinalMark()) out_ << "  final " << *sub.getFinalMark();
+      |                                ^                                          
+      |                                 {
+src/ui/ConsoleApp.cpp:143:56: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+  143 |         if (sub.getFinalMark()) out_ << "  final " << *sub.getFinalMark();
+      |                                                        ^
+src/ui/ConsoleApp.cpp:149:25: warning: statement should be inside braces [readability-braces-around-statements]
+  149 |     if (entries.empty()) out_ << "  (no audit entries)\n";
+      |                         ^                                 
+      |                          {
+src/ui/ConsoleApp.cpp:152:29: warning: statement should be inside braces [readability-braces-around-statements]
+  152 |         if (e.getOldValue()) out_ << *e.getOldValue(); else out_ << "-";
+      |                             ^
+      |                              {                         } 
+src/ui/ConsoleApp.cpp:152:39: warning: unchecked access to optional value [bugprone-unchecked-optional-access]
+  152 |         if (e.getOldValue()) out_ << *e.getOldValue(); else out_ << "-";
+      |                                       ^
+src/ui/ConsoleApp.cpp:152:60: warning: statement should be inside braces [readability-braces-around-statements]
+  152 |         if (e.getOldValue()) out_ << *e.getOldValue(); else out_ << "-";
+      |                                                            ^            
+      |                                                             {
+src/ui/ConsoleApp.cpp:171:21: warning: statement should be inside braces [readability-braces-around-statements]
+  171 |         if (created) return;
+      |                     ^       
+      |                      {
+src/ui/ConsoleApp.cpp:176:5: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  176 |     std::string oldPw, newPw;
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:177:90: warning: statement should be inside braces [readability-braces-around-statements]
+  177 |     if (!readSecret("Current password: ", oldPw) || !readSecret("New password: ", newPw)) return;
+      |                                                                                          ^       
+      |                                                                                           {
+src/ui/ConsoleApp.cpp:187:36: warning: statement should be inside braces [readability-braces-around-statements]
+  187 |         if (s_.auth.noUsersExist()) firstRunSetup();
+      |                                    ^                
+      |                                     {
+src/ui/ConsoleApp.cpp:192:9: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  192 |         std::string username, password;
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:193:47: warning: statement should be inside braces [readability-braces-around-statements]
+  193 |         if (!readLine("Username: ", username)) break;
+      |                                               ^      
+      |                                                {
+src/ui/ConsoleApp.cpp:194:36: warning: statement should be inside braces [readability-braces-around-statements]
+  194 |         if (trim(username).empty()) break;
+      |                                    ^      
+      |                                     {
+src/ui/ConsoleApp.cpp:195:49: warning: statement should be inside braces [readability-braces-around-statements]
+  195 |         if (!readSecret("Password: ", password)) break;
+      |                                                 ^      
+      |                                                  {
+src/ui/ConsoleApp.cpp:225:18: warning: function 'adminMenu' has cognitive complexity of 69 (threshold 25) [readability-function-cognitive-complexity]
+  225 | void ConsoleApp::adminMenu(const UserPtr& user) {
+      |                  ^
+src/ui/ConsoleApp.cpp:227:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  227 |     while (!eof_) {
+      |     ^
+src/ui/ConsoleApp.cpp:232:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  232 |         if (!readInt("> ", choice)) return;
+      |         ^
+src/ui/ConsoleApp.cpp:233:17: note: nesting level increased to 2
+  233 |         guarded([&] {
+      |                 ^
+src/ui/ConsoleApp.cpp:234:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  234 |             switch (choice) {
+      |             ^
+src/ui/ConsoleApp.cpp:238:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  238 |                     if (!readLine("Department name: ", name)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:246:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  246 |                     for (const auto& d : s_.courses.departments()) out_ << "  [" << d.getId() << "] " << d.getName() << "\n";
+      |                     ^
+src/ui/ConsoleApp.cpp:247:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  247 |                     if (!readLine("Course code: ", code) || !readLine("Title: ", title) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:247:89: note: +1
+  247 |                     if (!readLine("Course code: ", code) || !readLine("Title: ", title) ||
+      |                                                                                         ^
+src/ui/ConsoleApp.cpp:256:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  256 |                     if (!readInt("Role: ", r)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:257:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  257 |                     if (r < 1 || r > 4) throw ValidationError("Choose a role from 1 to 4.");
+      |                     ^
+src/ui/ConsoleApp.cpp:257:31: note: +1
+  257 |                     if (r < 1 || r > 4) throw ValidationError("Choose a role from 1 to 4.");
+      |                               ^
+src/ui/ConsoleApp.cpp:261:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  261 |                     if (!readLine("Username: ", d.username) || !readLine("Full name: ", d.fullName) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:261:101: note: +1
+  261 |                     if (!readLine("Username: ", d.username) || !readLine("Full name: ", d.fullName) ||
+      |                                                                                                     ^
+src/ui/ConsoleApp.cpp:263:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  263 |                     if (role == Role::Student && !readLine("Student number: ", d.studentNumber)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:263:47: note: +1
+  263 |                     if (role == Role::Student && !readLine("Student number: ", d.studentNumber)) return;
+      |                                               ^
+src/ui/ConsoleApp.cpp:264:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  264 |                     if (role == Role::Lecturer || role == Role::Hod) {
+      |                     ^
+src/ui/ConsoleApp.cpp:264:48: note: +1
+  264 |                     if (role == Role::Lecturer || role == Role::Hod) {
+      |                                                ^
+src/ui/ConsoleApp.cpp:265:25: note: +5, including nesting penalty of 4, nesting level increased to 5
+  265 |                         for (const auto& dep : s_.courses.departments()) out_ << "  [" << dep.getId() << "] " << dep.getName() << "\n";
+      |                         ^
+src/ui/ConsoleApp.cpp:266:25: note: +5, including nesting penalty of 4, nesting level increased to 5
+  266 |                         if (!readInt("Department id: ", d.departmentId)) return;
+      |                         ^
+src/ui/ConsoleApp.cpp:273:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  273 |                     for (const auto& u : s_.admin.listUsers(*self)) {
+      |                     ^
+src/ui/ConsoleApp.cpp:281:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  281 |                     if (!readInt("Course id: ", c) || !readInt("Lecturer user id: ", l)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:281:52: note: +1
+  281 |                     if (!readInt("Course id: ", c) || !readInt("Lecturer user id: ", l)) return;
+      |                                                    ^
+src/ui/ConsoleApp.cpp:289:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  289 |                     if (!readInt("Course id: ", c) || !readInt("Student user id: ", st)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:289:52: note: +1
+  289 |                     if (!readInt("Course id: ", c) || !readInt("Student user id: ", st)) return;
+      |                                                    ^
+src/ui/ConsoleApp.cpp:299:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  299 |         if (choice == 0) return;
+      |         ^
+src/ui/ConsoleApp.cpp:232:36: warning: statement should be inside braces [readability-braces-around-statements]
+  232 |         if (!readInt("> ", choice)) return;
+      |                                    ^       
+      |                                     {
+src/ui/ConsoleApp.cpp:233:17: warning: lambda has cognitive complexity of 36 (threshold 25) [readability-function-cognitive-complexity]
+  233 |         guarded([&] {
+      |                 ^
+src/ui/ConsoleApp.cpp:234:13: note: +1, including nesting penalty of 0, nesting level increased to 1
+  234 |             switch (choice) {
+      |             ^
+src/ui/ConsoleApp.cpp:238:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  238 |                     if (!readLine("Department name: ", name)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:246:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  246 |                     for (const auto& d : s_.courses.departments()) out_ << "  [" << d.getId() << "] " << d.getName() << "\n";
+      |                     ^
+src/ui/ConsoleApp.cpp:247:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  247 |                     if (!readLine("Course code: ", code) || !readLine("Title: ", title) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:247:89: note: +1
+  247 |                     if (!readLine("Course code: ", code) || !readLine("Title: ", title) ||
+      |                                                                                         ^
+src/ui/ConsoleApp.cpp:256:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  256 |                     if (!readInt("Role: ", r)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:257:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  257 |                     if (r < 1 || r > 4) throw ValidationError("Choose a role from 1 to 4.");
+      |                     ^
+src/ui/ConsoleApp.cpp:257:31: note: +1
+  257 |                     if (r < 1 || r > 4) throw ValidationError("Choose a role from 1 to 4.");
+      |                               ^
+src/ui/ConsoleApp.cpp:261:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  261 |                     if (!readLine("Username: ", d.username) || !readLine("Full name: ", d.fullName) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:261:101: note: +1
+  261 |                     if (!readLine("Username: ", d.username) || !readLine("Full name: ", d.fullName) ||
+      |                                                                                                     ^
+src/ui/ConsoleApp.cpp:263:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  263 |                     if (role == Role::Student && !readLine("Student number: ", d.studentNumber)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:263:47: note: +1
+  263 |                     if (role == Role::Student && !readLine("Student number: ", d.studentNumber)) return;
+      |                                               ^
+src/ui/ConsoleApp.cpp:264:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  264 |                     if (role == Role::Lecturer || role == Role::Hod) {
+      |                     ^
+src/ui/ConsoleApp.cpp:264:48: note: +1
+  264 |                     if (role == Role::Lecturer || role == Role::Hod) {
+      |                                                ^
+src/ui/ConsoleApp.cpp:265:25: note: +3, including nesting penalty of 2, nesting level increased to 3
+  265 |                         for (const auto& dep : s_.courses.departments()) out_ << "  [" << dep.getId() << "] " << dep.getName() << "\n";
+      |                         ^
+src/ui/ConsoleApp.cpp:266:25: note: +3, including nesting penalty of 2, nesting level increased to 3
+  266 |                         if (!readInt("Department id: ", d.departmentId)) return;
+      |                         ^
+src/ui/ConsoleApp.cpp:273:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  273 |                     for (const auto& u : s_.admin.listUsers(*self)) {
+      |                     ^
+src/ui/ConsoleApp.cpp:281:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  281 |                     if (!readInt("Course id: ", c) || !readInt("Lecturer user id: ", l)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:281:52: note: +1
+  281 |                     if (!readInt("Course id: ", c) || !readInt("Lecturer user id: ", l)) return;
+      |                                                    ^
+src/ui/ConsoleApp.cpp:289:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  289 |                     if (!readInt("Course id: ", c) || !readInt("Student user id: ", st)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:289:52: note: +1
+  289 |                     if (!readInt("Course id: ", c) || !readInt("Student user id: ", st)) return;
+      |                                                    ^
+src/ui/ConsoleApp.cpp:238:62: warning: statement should be inside braces [readability-braces-around-statements]
+  238 |                     if (!readLine("Department name: ", name)) return;
+      |                                                              ^       
+      |                                                               {
+src/ui/ConsoleApp.cpp:244:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  244 |                     std::string code, title;
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:246:67: warning: statement should be inside braces [readability-braces-around-statements]
+  246 |                     for (const auto& d : s_.courses.departments()) out_ << "  [" << d.getId() << "] " << d.getName() << "\n";
+      |                                                                   ^                                                          
+      |                                                                    {
+src/ui/ConsoleApp.cpp:248:58: warning: statement should be inside braces [readability-braces-around-statements]
+  248 |                         !readInt("Department id: ", dep)) return;
+      |                                                          ^       
+      |                                                           {
+src/ui/ConsoleApp.cpp:256:47: warning: statement should be inside braces [readability-braces-around-statements]
+  256 |                     if (!readInt("Role: ", r)) return;
+      |                                               ^       
+      |                                                {
+src/ui/ConsoleApp.cpp:257:40: warning: statement should be inside braces [readability-braces-around-statements]
+  257 |                     if (r < 1 || r > 4) throw ValidationError("Choose a role from 1 to 4.");
+      |                                        ^                                                    
+      |                                         {
+src/ui/ConsoleApp.cpp:258:27: warning: do not declare C-style arrays, use std::array<> instead [modernize-avoid-c-arrays]
+  258 |                     const Role roles[] = {Role::Admin, Role::Lecturer, Role::Hod, Role::Student};
+      |                           ^
+src/ui/ConsoleApp.cpp:262:71: warning: statement should be inside braces [readability-braces-around-statements]
+  262 |                         !readSecret("Initial password: ", d.password)) return;
+      |                                                                       ^       
+      |                                                                        {
+src/ui/ConsoleApp.cpp:263:97: warning: statement should be inside braces [readability-braces-around-statements]
+  263 |                     if (role == Role::Student && !readLine("Student number: ", d.studentNumber)) return;
+      |                                                                                                 ^       
+      |                                                                                                  {
+src/ui/ConsoleApp.cpp:265:73: warning: statement should be inside braces [readability-braces-around-statements]
+  265 |                         for (const auto& dep : s_.courses.departments()) out_ << "  [" << dep.getId() << "] " << dep.getName() << "\n";
+      |                                                                         ^                                                              
+      |                                                                          {
+src/ui/ConsoleApp.cpp:266:73: warning: statement should be inside braces [readability-braces-around-statements]
+  266 |                         if (!readInt("Department id: ", d.departmentId)) return;
+      |                                                                         ^       
+      |                                                                          {
+src/ui/ConsoleApp.cpp:279:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  279 |                     int c = 0, l = 0;
+      |                     ^~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:281:89: warning: statement should be inside braces [readability-braces-around-statements]
+  281 |                     if (!readInt("Course id: ", c) || !readInt("Lecturer user id: ", l)) return;
+      |                                                                                         ^       
+      |                                                                                          {
+src/ui/ConsoleApp.cpp:287:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  287 |                     int c = 0, st = 0;
+      |                     ^~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:289:89: warning: statement should be inside braces [readability-braces-around-statements]
+  289 |                     if (!readInt("Course id: ", c) || !readInt("Student user id: ", st)) return;
+      |                                                                                         ^       
+      |                                                                                          {
+src/ui/ConsoleApp.cpp:299:25: warning: statement should be inside braces [readability-braces-around-statements]
+  299 |         if (choice == 0) return;
+      |                         ^       
+      |                          {
+src/ui/ConsoleApp.cpp:303:18: warning: function 'lecturerMenu' has cognitive complexity of 39 (threshold 25) [readability-function-cognitive-complexity]
+  303 | void ConsoleApp::lecturerMenu(const UserPtr& user) {
+      |                  ^
+src/ui/ConsoleApp.cpp:305:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  305 |     while (!eof_) {
+      |     ^
+src/ui/ConsoleApp.cpp:310:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  310 |         if (!readInt("> ", choice)) return;
+      |         ^
+src/ui/ConsoleApp.cpp:311:17: note: nesting level increased to 2
+  311 |         guarded([&] {
+      |                 ^
+src/ui/ConsoleApp.cpp:312:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  312 |             switch (choice) {
+      |             ^
+src/ui/ConsoleApp.cpp:320:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  320 |                     if (!readInt("Course id: ", c) || !readLine("Title: ", title) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:321:61: note: +1
+  321 |                         !readDateTime("Deadline", deadline) || !readInt("Maximum mark: ", max)) return;
+      |                                                             ^
+src/ui/ConsoleApp.cpp:329:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  329 |                     if (!readInt("Course id: ", c)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:336:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  336 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:338:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  338 |                     for (const auto& u : s_.courses.studentsOf(*self, asg.getCourseId())) {
+      |                     ^
+src/ui/ConsoleApp.cpp:341:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  341 |                     if (!readInt("Student user id: ", st) || !readDateTime("New deadline", d)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:341:59: note: +1
+  341 |                     if (!readInt("Student user id: ", st) || !readDateTime("New deadline", d)) return;
+      |                                                           ^
+src/ui/ConsoleApp.cpp:348:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  348 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:355:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  355 |                     if (!readInt("Submission id: ", id) || !readInt("Raw mark: ", raw) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:356:53: note: +1
+  356 |                         !readLine("Feedback: ", fb) ||
+      |                                                     ^
+src/ui/ConsoleApp.cpp:366:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  366 |         if (choice == 0) return;
+      |         ^
+src/ui/ConsoleApp.cpp:310:36: warning: statement should be inside braces [readability-braces-around-statements]
+  310 |         if (!readInt("> ", choice)) return;
+      |                                    ^       
+      |                                     {
+src/ui/ConsoleApp.cpp:316:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  316 |                     int c = 0, max = 0;
+      |                     ^~~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:321:96: warning: statement should be inside braces [readability-braces-around-statements]
+  321 |                         !readDateTime("Deadline", deadline) || !readInt("Maximum mark: ", max)) return;
+      |                                                                                                ^       
+      |                                                                                                 {
+src/ui/ConsoleApp.cpp:329:52: warning: statement should be inside braces [readability-braces-around-statements]
+  329 |                     if (!readInt("Course id: ", c)) return;
+      |                                                    ^       
+      |                                                     {
+src/ui/ConsoleApp.cpp:334:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  334 |                     int a = 0, st = 0;
+      |                     ^~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:336:56: warning: statement should be inside braces [readability-braces-around-statements]
+  336 |                     if (!readInt("Assignment id: ", a)) return;
+      |                                                        ^       
+      |                                                         {
+src/ui/ConsoleApp.cpp:341:95: warning: statement should be inside braces [readability-braces-around-statements]
+  341 |                     if (!readInt("Student user id: ", st) || !readDateTime("New deadline", d)) return;
+      |                                                                                               ^       
+      |                                                                                                {
+src/ui/ConsoleApp.cpp:348:56: warning: statement should be inside braces [readability-braces-around-statements]
+  348 |                     if (!readInt("Assignment id: ", a)) return;
+      |                                                        ^       
+      |                                                         {
+src/ui/ConsoleApp.cpp:353:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  353 |                     int id = 0, raw = 0;
+      |                     ^~~~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:354:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  354 |                     std::string fb, reason;
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:357:93: warning: statement should be inside braces [readability-braces-around-statements]
+  357 |                         !readLine("Reason for change (required when re-marking): ", reason)) return;
+      |                                                                                             ^       
+      |                                                                                              {
+src/ui/ConsoleApp.cpp:366:25: warning: statement should be inside braces [readability-braces-around-statements]
+  366 |         if (choice == 0) return;
+      |                         ^       
+      |                          {
+src/ui/ConsoleApp.cpp:370:18: warning: function 'hodMenu' has cognitive complexity of 79 (threshold 25) [readability-function-cognitive-complexity]
+  370 | void ConsoleApp::hodMenu(const UserPtr& user) {
+      |                  ^
+src/ui/ConsoleApp.cpp:372:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  372 |     while (!eof_) {
+      |     ^
+src/ui/ConsoleApp.cpp:378:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  378 |         if (!readInt("> ", choice)) return;
+      |         ^
+src/ui/ConsoleApp.cpp:379:17: note: nesting level increased to 2
+  379 |         guarded([&] {
+      |                 ^
+src/ui/ConsoleApp.cpp:380:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  380 |             switch (choice) {
+      |             ^
+src/ui/ConsoleApp.cpp:386:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  386 |                     if (!readInt("Course id: ", c)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:392:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  392 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:399:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  399 |                     if (!readInt("Submission id: ", id) || !readInt("New final mark: ", m) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:399:92: note: +1
+  399 |                     if (!readInt("Submission id: ", id) || !readInt("New final mark: ", m) ||
+      |                                                                                            ^
+src/ui/ConsoleApp.cpp:407:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  407 |                     if (!readInt("Submission id: ", id)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:409:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  409 |                     if (!seen.getFinalMark()) throw BusinessRuleError("That work has not been marked yet.");
+      |                     ^
+src/ui/ConsoleApp.cpp:413:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  413 |                     if (!readLine("Approve this mark? (y/n): ", answer)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:414:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  414 |                     if (trim(answer) != "y") {
+      |                     ^
+src/ui/ConsoleApp.cpp:424:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  424 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:428:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  428 |                     for (const auto& sub : list) {
+      |                     ^
+src/ui/ConsoleApp.cpp:429:25: note: +5, including nesting penalty of 4, nesting level increased to 5
+  429 |                         if (sub.getStatus() == SubmissionStatus::Marked) reviewed.push_back({sub.getId(), *sub.getFinalMark()});
+      |                         ^
+src/ui/ConsoleApp.cpp:431:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  431 |                     if (reviewed.empty()) {
+      |                     ^
+src/ui/ConsoleApp.cpp:436:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  436 |                     if (!readLine("Approve the " + std::to_string(reviewed.size()) + " marked submission(s) shown above? (y/n): ", answer)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:437:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  437 |                     if (trim(answer) != "y") {
+      |                     ^
+src/ui/ConsoleApp.cpp:443:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  443 |                     if (r.skipped > 0) out_ << " " << r.skipped << " changed after you reviewed them and were skipped.";
+      |                     ^
+src/ui/ConsoleApp.cpp:450:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  450 |                     if (!readInt("Submission id: ", id) || !readLine("Comment for the lecturer: ", comment)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:450:57: note: +1
+  450 |                     if (!readInt("Submission id: ", id) || !readLine("Comment for the lecturer: ", comment)) return;
+      |                                                         ^
+src/ui/ConsoleApp.cpp:457:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  457 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:464:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  464 |                     if (!readInt("Submission id: ", id)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:472:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  472 |         if (choice == 0) return;
+      |         ^
+src/ui/ConsoleApp.cpp:378:36: warning: statement should be inside braces [readability-braces-around-statements]
+  378 |         if (!readInt("> ", choice)) return;
+      |                                    ^       
+      |                                     {
+src/ui/ConsoleApp.cpp:379:17: warning: lambda has cognitive complexity of 38 (threshold 25) [readability-function-cognitive-complexity]
+  379 |         guarded([&] {
+      |                 ^
+src/ui/ConsoleApp.cpp:380:13: note: +1, including nesting penalty of 0, nesting level increased to 1
+  380 |             switch (choice) {
+      |             ^
+src/ui/ConsoleApp.cpp:386:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  386 |                     if (!readInt("Course id: ", c)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:392:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  392 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:399:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  399 |                     if (!readInt("Submission id: ", id) || !readInt("New final mark: ", m) ||
+      |                     ^
+src/ui/ConsoleApp.cpp:399:92: note: +1
+  399 |                     if (!readInt("Submission id: ", id) || !readInt("New final mark: ", m) ||
+      |                                                                                            ^
+src/ui/ConsoleApp.cpp:407:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  407 |                     if (!readInt("Submission id: ", id)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:409:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  409 |                     if (!seen.getFinalMark()) throw BusinessRuleError("That work has not been marked yet.");
+      |                     ^
+src/ui/ConsoleApp.cpp:413:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  413 |                     if (!readLine("Approve this mark? (y/n): ", answer)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:414:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  414 |                     if (trim(answer) != "y") {
+      |                     ^
+src/ui/ConsoleApp.cpp:424:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  424 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:428:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  428 |                     for (const auto& sub : list) {
+      |                     ^
+src/ui/ConsoleApp.cpp:429:25: note: +3, including nesting penalty of 2, nesting level increased to 3
+  429 |                         if (sub.getStatus() == SubmissionStatus::Marked) reviewed.push_back({sub.getId(), *sub.getFinalMark()});
+      |                         ^
+src/ui/ConsoleApp.cpp:431:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  431 |                     if (reviewed.empty()) {
+      |                     ^
+src/ui/ConsoleApp.cpp:436:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  436 |                     if (!readLine("Approve the " + std::to_string(reviewed.size()) + " marked submission(s) shown above? (y/n): ", answer)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:437:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  437 |                     if (trim(answer) != "y") {
+      |                     ^
+src/ui/ConsoleApp.cpp:443:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  443 |                     if (r.skipped > 0) out_ << " " << r.skipped << " changed after you reviewed them and were skipped.";
+      |                     ^
+src/ui/ConsoleApp.cpp:450:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  450 |                     if (!readInt("Submission id: ", id) || !readLine("Comment for the lecturer: ", comment)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:450:57: note: +1
+  450 |                     if (!readInt("Submission id: ", id) || !readLine("Comment for the lecturer: ", comment)) return;
+      |                                                         ^
+src/ui/ConsoleApp.cpp:457:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  457 |                     if (!readInt("Assignment id: ", a)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:464:21: note: +2, including nesting penalty of 1, nesting level increased to 2
+  464 |                     if (!readInt("Submission id: ", id)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:386:52: warning: statement should be inside braces [readability-braces-around-statements]
+  386 |                     if (!readInt("Course id: ", c)) return;
+      |                                                    ^       
+      |                                                     {
+src/ui/ConsoleApp.cpp:392:56: warning: statement should be inside braces [readability-braces-around-statements]
+  392 |                     if (!readInt("Assignment id: ", a)) return;
+      |                                                        ^       
+      |                                                         {
+src/ui/ConsoleApp.cpp:397:21: warning: multiple declarations in a single statement reduces readability [readability-isolate-declaration]
+  397 |                     int id = 0, m = 0;
+      |                     ^~~~~~~~~~~~~~~~~~
+src/ui/ConsoleApp.cpp:400:55: warning: statement should be inside braces [readability-braces-around-statements]
+  400 |                         !readLine("Reason: ", reason)) return;
+      |                                                       ^       
+      |                                                        {
+src/ui/ConsoleApp.cpp:407:57: warning: statement should be inside braces [readability-braces-around-statements]
+  407 |                     if (!readInt("Submission id: ", id)) return;
+      |                                                         ^       
+      |                                                          {
+src/ui/ConsoleApp.cpp:409:46: warning: statement should be inside braces [readability-braces-around-statements]
+  409 |                     if (!seen.getFinalMark()) throw BusinessRuleError("That work has not been marked yet.");
+      |                                              ^                                                              
+      |                                               {
+src/ui/ConsoleApp.cpp:413:73: warning: statement should be inside braces [readability-braces-around-statements]
+  413 |                     if (!readLine("Approve this mark? (y/n): ", answer)) return;
+      |                                                                         ^       
+      |                                                                          {
+src/ui/ConsoleApp.cpp:418:54: warning: conversion from 'std::optional<int>' into 'int' and back into 'std::optional<int>', remove potentially error-prone optional dereference [bugprone-optional-value-conversion]
+  418 |                     s_.moderation.approve(*self, id, *seen.getFinalMark());
+      |                                                      ^
+src/ui/ConsoleApp.cpp:418:54: note: remove '*' to silence this warning
+  418 |                     s_.moderation.approve(*self, id, *seen.getFinalMark());
+      |                                                      ^
+src/ui/ConsoleApp.cpp:424:56: warning: statement should be inside braces [readability-braces-around-statements]
+  424 |                     if (!readInt("Assignment id: ", a)) return;
+      |                                                        ^       
+      |                                                         {
+src/ui/ConsoleApp.cpp:429:73: warning: statement should be inside braces [readability-braces-around-statements]
+  429 |                         if (sub.getStatus() == SubmissionStatus::Marked) reviewed.push_back({sub.getId(), *sub.getFinalMark()});
+      |                                                                         ^                                                       
+      |                                                                          {
+src/ui/ConsoleApp.cpp:436:140: warning: statement should be inside braces [readability-braces-around-statements]
+  436 |                     if (!readLine("Approve the " + std::to_string(reviewed.size()) + " marked submission(s) shown above? (y/n): ", answer)) return;
+      |                                                                                                                                            ^       
+      |                                                                                                                                             {
+src/ui/ConsoleApp.cpp:443:39: warning: statement should be inside braces [readability-braces-around-statements]
+  443 |                     if (r.skipped > 0) out_ << " " << r.skipped << " changed after you reviewed them and were skipped.";
+      |                                       ^                                                                                 
+      |                                        {
+src/ui/ConsoleApp.cpp:450:109: warning: statement should be inside braces [readability-braces-around-statements]
+  450 |                     if (!readInt("Submission id: ", id) || !readLine("Comment for the lecturer: ", comment)) return;
+      |                                                                                                             ^       
+      |                                                                                                              {
+src/ui/ConsoleApp.cpp:457:56: warning: statement should be inside braces [readability-braces-around-statements]
+  457 |                     if (!readInt("Assignment id: ", a)) return;
+      |                                                        ^       
+      |                                                         {
+src/ui/ConsoleApp.cpp:464:57: warning: statement should be inside braces [readability-braces-around-statements]
+  464 |                     if (!readInt("Submission id: ", id)) return;
+      |                                                         ^       
+      |                                                          {
+src/ui/ConsoleApp.cpp:472:25: warning: statement should be inside braces [readability-braces-around-statements]
+  472 |         if (choice == 0) return;
+      |                         ^       
+      |                          {
+src/ui/ConsoleApp.cpp:476:18: warning: function 'studentMenu' has cognitive complexity of 32 (threshold 25) [readability-function-cognitive-complexity]
+  476 | void ConsoleApp::studentMenu(const UserPtr& user) {
+      |                  ^
+src/ui/ConsoleApp.cpp:478:5: note: +1, including nesting penalty of 0, nesting level increased to 1
+  478 |     while (!eof_) {
+      |     ^
+src/ui/ConsoleApp.cpp:482:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  482 |         if (!readInt("> ", choice)) return;
+      |         ^
+src/ui/ConsoleApp.cpp:483:17: note: nesting level increased to 2
+  483 |         guarded([&] {
+      |                 ^
+src/ui/ConsoleApp.cpp:484:13: note: +3, including nesting penalty of 2, nesting level increased to 3
+  484 |             switch (choice) {
+      |             ^
+src/ui/ConsoleApp.cpp:488:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  488 |                     if (rows.empty()) out_ << "  (no assignments)\n";
+      |                     ^
+src/ui/ConsoleApp.cpp:489:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  489 |                     for (const auto& r : rows) {
+      |                     ^
+src/ui/ConsoleApp.cpp:492:25: note: +5, including nesting penalty of 4, nesting level increased to 5
+  492 |                         if (!r.current) {
+      |                         ^
+src/ui/ConsoleApp.cpp:494:32: note: +1, nesting level increased to 5
+  494 |                         } else if (r.current->getStatus() == SubmissionStatus::Released) {
+      |                                ^
+src/ui/ConsoleApp.cpp:497:27: note: +1, nesting level increased to 5
+  497 |                         } else {
+      |                           ^
+src/ui/ConsoleApp.cpp:506:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  506 |                     if (!readInt("Assignment id: ", a) || !readMultiline("Enter your answer", content)) return;
+      |                     ^
+src/ui/ConsoleApp.cpp:506:56: note: +1
+  506 |                     if (!readInt("Assignment id: ", a) || !readMultiline("Enter your answer", content)) return;
+      |                                                        ^
+src/ui/ConsoleApp.cpp:509:21: note: +4, including nesting penalty of 3, nesting level increased to 4
+  509 |                     if (sub.getLateDays() > 0) out_ << " (LATE by " << sub.getLateDays() << " day(s))";
+      |                     ^
+src/ui/ConsoleApp.cpp:517:9: note: +2, including nesting penalty of 1, nesting level increased to 2
+  517 |         if (choice == 0) return;
+      |         ^
+src/ui/ConsoleApp.cpp:482:36: warning: statement should be inside braces [readability-braces-around-statements]
+  482 |         if (!readInt("> ", choice)) return;
+      |                                    ^       
+      |                                     {
+src/ui/ConsoleApp.cpp:488:38: warning: statement should be inside braces [readability-braces-around-statements]
+  488 |                     if (rows.empty()) out_ << "  (no assignments)\n";
+      |                                      ^                               
+      |                                       {
+src/ui/ConsoleApp.cpp:506:104: warning: statement should be inside braces [readability-braces-around-statements]
+  506 |                     if (!readInt("Assignment id: ", a) || !readMultiline("Enter your answer", content)) return;
+      |                                                                                                        ^       
+      |                                                                                                         {
+src/ui/ConsoleApp.cpp:509:47: warning: statement should be inside braces [readability-braces-around-statements]
+  509 |                     if (sub.getLateDays() > 0) out_ << " (LATE by " << sub.getLateDays() << " day(s))";
+      |                                               ^                                                        
+      |                                                {
+src/ui/ConsoleApp.cpp:517:25: warning: statement should be inside braces [readability-braces-around-statements]
+  517 |         if (choice == 0) return;
+      |                         ^       
+      |                          {
+src/util/DateTime.cpp:19:11: warning: use auto when initializing with a cast to avoid duplicating the type name [modernize-use-auto]
+   19 |     const unsigned yoe = static_cast<unsigned>(year - era * 400);
+      |           ^~~~~~~~
+      |           auto
+src/util/DateTime.cpp:28:11: warning: use auto when initializing with a cast to avoid duplicating the type name [modernize-use-auto]
+   28 |     const unsigned doe = static_cast<unsigned>(z - era * 146097);
+      |           ^~~~~~~~
+      |           auto
+src/util/DateTime.cpp:40:46: warning: statement should be inside braces [readability-braces-around-statements]
+   40 |     if ((a % b != 0) && ((a < 0) != (b < 0))) --q;
+      |                                              ^    
+      |                                               {
+src/util/DateTime.cpp:47:44: warning: statement should be inside braces [readability-braces-around-statements]
+   47 |         if (text[i] < '0' || text[i] > '9') throw ValidationError("Invalid date or time: " + text);
+      |                                            ^                                                       
+      |                                             {
+src/util/DateTime.cpp:54:24: warning: statement should be inside braces [readability-braces-around-statements]
+   54 |     if (text[pos] != c) throw ValidationError("Invalid date or time: " + text);
+      |                        ^                                                       
+      |                         {
+src/util/DateTime.cpp:72:36: warning: performing an implicit widening conversion to type 'std::int64_t' (aka 'long') of a multiplication performed in type 'int' [bugprone-implicit-widening-of-multiplication-result]
+   72 |     return days * kSecondsPerDay + hour * 3600 + minute * 60 + second;
+      |                                    ^
+src/util/DateTime.cpp:72:36: note: make conversion explicit to silence this warning
+   72 |     return days * kSecondsPerDay + hour * 3600 + minute * 60 + second;
+      |                                    ^~~~~~~~~~~
+      |                                    static_cast<std::int64_t>( )
+src/util/DateTime.cpp:72:36: note: perform multiplication in a wider type
+   72 |     return days * kSecondsPerDay + hour * 3600 + minute * 60 + second;
+      |                                    ^~~~
+      |                                    static_cast<std::int64_t>( )
+src/util/DateTime.cpp:72:50: warning: performing an implicit widening conversion to type 'std::int64_t' (aka 'long') of a multiplication performed in type 'int' [bugprone-implicit-widening-of-multiplication-result]
+   72 |     return days * kSecondsPerDay + hour * 3600 + minute * 60 + second;
+      |                                                  ^
+src/util/DateTime.cpp:72:50: note: make conversion explicit to silence this warning
+    3 |     return days * kSecondsPerDay + hour * 3600 + minute * 60 + second;
+      |                                                  ^~~~~~~~~~~
+      |                                                  static_cast<std::int64_t>( )
+src/util/DateTime.cpp:72:50: note: perform multiplication in a wider type
+   72 |     return days * kSecondsPerDay + hour * 3600 + minute * 60 + second;
+      |                                                  ^~~~~~
+      |                                                  static_cast<std::int64_t>( )
+src/util/DateTime.cpp:80:27: warning: statement should be inside braces [readability-braces-around-statements]
+   80 |     if (text.size() != 20) throw ValidationError("Invalid date or time: " + text);
+      |                           ^                                                       
+      |                            {
+src/util/DateTime.cpp:92:27: warning: statement should be inside braces [readability-braces-around-statements]
+   92 |     if (text.size() != 16) throw ValidationError("Use the format YYYY-MM-DD HH:MM, for example 2026-11-07 23:59.");
+      |                           ^                                                                                        
+      |                            {
+src/util/DateTime.cpp:114:5: warning: do not declare C-style arrays, use std::array<> instead [modernize-avoid-c-arrays]
+  114 |     char buffer[32];
+      |     ^
+src/util/DateTime.cpp:115:5: warning: the value returned by this function should not be disregarded; neglecting it may lead to errors [cert-err33-c]
+  115 |     std::snprintf(buffer, sizeof buffer, "%04d-%02u-%02uT%02d:%02d:%02dZ", y, m, d,
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  116 |                   static_cast<int>(secondOfDay / 3600), static_cast<int>((secondOfDay % 3600) / 60),
+      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  117 |                   static_cast<int>(secondOfDay % 60));
+      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/util/DateTime.cpp:115:5: note: cast the expression to void to silence this warning
+src/util/DateTime.cpp:129:5: warning: do not declare C-style arrays, use std::array<> instead [modernize-avoid-c-arrays]
+  129 |     char buffer[32];
+      |     ^
+src/util/DateTime.cpp:130:5: warning: the value returned by this function should not be disregarded; neglecting it may lead to errors [cert-err33-c]
+  130 |     std::snprintf(buffer, sizeof buffer, "%04d-%02u-%02u %02d:%02d", y, m, d,
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  131 |                   static_cast<int>(secondOfDay / 3600), static_cast<int>((secondOfDay % 3600) / 60));
+      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/util/DateTime.cpp:130:5: note: cast the expression to void to silence this warning
+src/util/Validation.cpp:12:27: warning: implicit conversion 'int' -> 'bool' [readability-implicit-bool-conversion]
+   12 |     while (begin < end && std::isspace(static_cast<unsigned char>(text[begin]))) ++begin;
+      |                           ^                                                    
+      |                           (                                                     != 0)
+src/util/Validation.cpp:12:81: warning: statement should be inside braces [readability-braces-around-statements]
+   12 |     while (begin < end && std::isspace(static_cast<unsigned char>(text[begin]))) ++begin;
+      |                                                                                 ^        
+      |                                                                                  {
+src/util/Validation.cpp:13:27: warning: implicit conversion 'int' -> 'bool' [readability-implicit-bool-conversion]
+   13 |     while (end > begin && std::isspace(static_cast<unsigned char>(text[end - 1]))) --end;
+      |                           ^                                                      
+      |                           (                                                       != 0)
+src/util/Validation.cpp:13:83: warning: statement should be inside braces [readability-braces-around-statements]
+   13 |     while (end > begin && std::isspace(static_cast<unsigned char>(text[end - 1]))) --end;
+      |                                                                                   ^      
+      |                                                                                    {
+src/util/Validation.cpp:19:23: warning: statement should be inside braces [readability-braces-around-statements]
+   19 |     if (value.empty()) throw ValidationError(field + " must not be empty.");
+      |                       ^                                                     
+      |                        {

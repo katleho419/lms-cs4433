@@ -1,0 +1,34 @@
+# Static analysis configuration (Phase 6). Run: tools/static_analysis.sh
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  cert-*,
+  -cert-err58-cpp,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-slicing,
+  cppcoreguidelines-pro-type-cstyle-cast,
+  cppcoreguidelines-narrowing-conversions,
+  misc-*,
+  -misc-non-private-member-variables-in-classes,
+  -misc-include-cleaner,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
+  performance-*,
+  portability-*,
+  readability-braces-around-statements,
+  readability-container-size-empty,
+  readability-else-after-return,
+  readability-redundant-*,
+  readability-simplify-boolean-expr,
+  readability-isolate-declaration,
+  readability-implicit-bool-conversion,
+  readability-function-cognitive-complexity
+WarningsAsErrors: ''
+HeaderFilterRegex: 'src/.*'
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: '25'

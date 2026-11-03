@@ -7,13 +7,13 @@ namespace {
 const char* const kSelectAssignment = "SELECT id, course_id, title, deadline, max_mark FROM assignment ";
 
 Assignment toAssignment(const Statement& row) {
-    return Assignment(row.columnInt(0), row.columnInt(1), row.columnText(2),
-                      DateTime::parseIso(row.columnText(3)), row.columnInt(4));
+    return {row.columnInt(0), row.columnInt(1), row.columnText(2), DateTime::parseIso(row.columnText(3)),
+            row.columnInt(4)};
 }
 
 Extension toExtension(const Statement& row) {
-    return Extension(row.columnInt(0), row.columnInt(1), row.columnInt(2),
-                     DateTime::parseIso(row.columnText(3)), row.columnInt(4));
+    return {row.columnInt(0), row.columnInt(1), row.columnInt(2), DateTime::parseIso(row.columnText(3)),
+            row.columnInt(4)};
 }
 
 }  // namespace
@@ -21,7 +21,9 @@ Extension toExtension(const Statement& row) {
 std::optional<Assignment> SqliteAssignmentRepository::findById(int id) const {
     Statement query(db_, std::string(kSelectAssignment) + "WHERE id = ?");
     query.bind(1, id);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toAssignment(query);
 }
 
@@ -29,7 +31,9 @@ std::vector<Assignment> SqliteAssignmentRepository::findByCourse(int courseId) c
     Statement query(db_, std::string(kSelectAssignment) + "WHERE course_id = ? ORDER BY deadline, id");
     query.bind(1, courseId);
     std::vector<Assignment> assignments;
-    while (query.step()) assignments.push_back(toAssignment(query));
+    while (query.step()) {
+        assignments.push_back(toAssignment(query));
+    }
     return assignments;
 }
 
@@ -44,8 +48,7 @@ void SqliteAssignmentRepository::save(Assignment& assignment) {
         insert.run();
         assignment.assignId(static_cast<int>(db_.lastInsertId()));
     } else {
-        Statement update(db_,
-                         "UPDATE assignment SET title = ?, deadline = ?, max_mark = ? WHERE id = ?");
+        Statement update(db_, "UPDATE assignment SET title = ?, deadline = ?, max_mark = ? WHERE id = ?");
         update.bind(1, assignment.getTitle())
             .bind(2, assignment.getDeadline().toIso())
             .bind(3, assignment.getMaxMark())
@@ -59,7 +62,9 @@ std::optional<Extension> SqliteAssignmentRepository::findExtension(int assignmen
                     "SELECT id, assignment_id, student_id, new_deadline, granted_by FROM extension "
                     "WHERE assignment_id = ? AND student_id = ?");
     query.bind(1, assignmentId).bind(2, studentId);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toExtension(query);
 }
 
@@ -74,8 +79,11 @@ void SqliteAssignmentRepository::saveExtension(Extension& extension) {
         .bind(3, extension.getNewDeadline().toIso())
         .bind(4, extension.getGrantedBy());
     upsert.run();
-    const std::optional<Extension> stored = findExtension(extension.getAssignmentId(), extension.getStudentId());
-    if (stored) extension.assignId(stored->getId());
+    const std::optional<Extension> stored =
+        findExtension(extension.getAssignmentId(), extension.getStudentId());
+    if (stored) {
+        extension.assignId(stored->getId());
+    }
 }
 
 }  // namespace lms

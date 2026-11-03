@@ -14,7 +14,9 @@ UserPtr AdminService::createUser(const User& actor, Role role, const UserData& d
         throw ValidationError("That username is already taken.");
     }
     if (role == Role::Lecturer || role == Role::Hod) {
-        if (!departments_.findById(data.departmentId)) throw NotFoundError("That department does not exist.");
+        if (!departments_.findById(data.departmentId)) {
+            throw NotFoundError("That department does not exist.");
+        }
     }
     if (role == Role::Hod && users_.findHeadOfDepartment(data.departmentId)) {
         throw BusinessRuleError("That department already has a Head of Department.");
@@ -48,8 +50,12 @@ Course AdminService::createCourse(const User& actor, const std::string& code, co
     requirePermission(actor, Permission::ManageCourses, "manage courses");
     Course course(0, requireText(code, "The course code", 20), requireText(title, "The course title", 100),
                   departmentId);
-    if (!departments_.findById(departmentId)) throw NotFoundError("That department does not exist.");
-    if (courses_.findByCode(course.getCode())) throw ValidationError("A course with that code already exists.");
+    if (!departments_.findById(departmentId)) {
+        throw NotFoundError("That department does not exist.");
+    }
+    if (courses_.findByCode(course.getCode())) {
+        throw ValidationError("A course with that code already exists.");
+    }
     courses_.save(course);
     return course;
 }
@@ -65,7 +71,9 @@ UserPtr AdminService::requireUserWithRole(int userId, Role role) const {
 void AdminService::assignLecturer(const User& actor, int courseId, int lecturerId) {
     requirePermission(actor, Permission::AssignLecturers, "assign lecturers to courses");
     const std::optional<Course> course = courses_.findById(courseId);
-    if (!course) throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+    if (!course) {
+        throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+    }
     const UserPtr lecturer = requireUserWithRole(lecturerId, Role::Lecturer);
     if (lecturer->getDepartmentId() != course->getDepartmentId()) {
         throw BusinessRuleError("The lecturer works in a different department from the course.");
@@ -78,7 +86,9 @@ void AdminService::assignLecturer(const User& actor, int courseId, int lecturerI
 
 void AdminService::enrolStudent(const User& actor, int courseId, int studentId) {
     requirePermission(actor, Permission::EnrolStudents, "enrol students");
-    if (!courses_.findById(courseId)) throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+    if (!courses_.findById(courseId)) {
+        throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+    }
     requireUserWithRole(studentId, Role::Student);
     if (courses_.isEnrolled(courseId, studentId)) {
         throw BusinessRuleError("That student is already enrolled in this course.");

@@ -6,7 +6,9 @@ namespace lms {
 
 Course CourseService::requireCourse(int courseId) const {
     const std::optional<Course> course = courses_.findById(courseId);
-    if (!course) throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+    if (!course) {
+        throw NotFoundError("There is no course with id " + std::to_string(courseId) + ".");
+    }
     return *course;
 }
 
@@ -42,10 +44,14 @@ void CourseService::requireCanSee(const User& actor, const Course& course) const
 
 std::vector<Course> CourseService::coursesFor(const User& actor) const {
     switch (actor.getRole()) {
-        case Role::Admin: return courses_.findAll();
-        case Role::Lecturer: return courses_.findByLecturer(actor.getId());
-        case Role::Hod: return courses_.findByDepartment(actor.getDepartmentId());
-        case Role::Student: return courses_.findByStudent(actor.getId());
+        case Role::Admin:
+            return courses_.findAll();
+        case Role::Lecturer:
+            return courses_.findByLecturer(actor.getId());
+        case Role::Hod:
+            return courses_.findByDepartment(actor.getDepartmentId());
+        case Role::Student:
+            return courses_.findByStudent(actor.getId());
     }
     return {};
 }
@@ -62,9 +68,11 @@ std::vector<UserPtr> CourseService::studentsOf(const User& actor, int courseId) 
         }
     }
     std::vector<UserPtr> students;
-    for (int id : courses_.studentIdsOf(courseId)) {
+    for (const int id : courses_.studentIdsOf(courseId)) {
         const std::optional<UserPtr> student = users_.findById(id);
-        if (student) students.push_back(*student);
+        if (student) {
+            students.push_back(*student);
+        }
     }
     return students;
 }

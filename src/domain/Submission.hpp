@@ -4,6 +4,7 @@
 #ifndef LMS_DOMAIN_SUBMISSION_HPP
 #define LMS_DOMAIN_SUBMISSION_HPP
 
+#include <cstdint>
 #include <optional>
 #include <string>
 
@@ -11,7 +12,7 @@
 
 namespace lms {
 
-enum class SubmissionStatus { Submitted, Late, Marked, Moderated, Released };
+enum class SubmissionStatus : std::uint8_t { Submitted, Late, Marked, Moderated, Released };
 
 std::string toString(SubmissionStatus status);
 SubmissionStatus submissionStatusFromString(const std::string& text);
@@ -19,8 +20,8 @@ SubmissionStatus submissionStatusFromString(const std::string& text);
 class Submission {
 public:
     Submission(int id, int assignmentId, int studentId, int version, std::string content,
-               DateTime submittedAt, SubmissionStatus status, int lateDays,
-               std::optional<int> rawMark, std::optional<int> finalMark, std::string feedback);
+               DateTime submittedAt, SubmissionStatus status, int lateDays, std::optional<int> rawMark,
+               std::optional<int> finalMark, std::string feedback);
 
     int getId() const { return id_; }
     int getAssignmentId() const { return assignmentId_; }

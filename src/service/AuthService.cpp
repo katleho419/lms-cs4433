@@ -29,7 +29,9 @@ UserPtr AuthService::login(const std::string& username, const std::string& passw
         spendHashingTime(password);
         throw AuthenticationError(kLoginFailed);
     }
-    if (!(*user)->verifyPassword(password)) throw AuthenticationError(kLoginFailed);
+    if (!(*user)->verifyPassword(password)) {
+        throw AuthenticationError(kLoginFailed);
+    }
     return *user;
 }
 
@@ -41,13 +43,17 @@ void AuthService::changePassword(UserPtr& user, const std::string& oldPassword,
     } catch (...) {
         // Put the in-memory user back in step with what is stored.
         const std::optional<UserPtr> stored = users_.findById(user->getId());
-        if (stored) user = *stored;
+        if (stored) {
+            user = *stored;
+        }
         throw;
     }
 }
 
 UserPtr AuthService::createInitialAdministrator(const UserData& data) {
-    if (!noUsersExist()) throw BusinessRuleError("An administrator already exists.");
+    if (!noUsersExist()) {
+        throw BusinessRuleError("An administrator already exists.");
+    }
     UserPtr admin(UserFactory::createUser(Role::Admin, data));
     users_.save(admin);
     return admin;

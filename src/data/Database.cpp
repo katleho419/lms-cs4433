@@ -18,7 +18,8 @@ std::string messageFor(sqlite3* db, const std::string& prefix) {
 }  // namespace
 
 Database::Database(const std::string& path) {
-    if (sqlite3_open_v2(path.c_str(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr) != SQLITE_OK) {
+    if (sqlite3_open_v2(path.c_str(), &db_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr) !=
+        SQLITE_OK) {
         const std::string message = messageFor(db_, "Cannot open the database file '" + path + "'");
         sqlite3_close(db_);
         db_ = nullptr;
@@ -50,7 +51,9 @@ Database::Database(const std::string& path) {
 }
 
 Database::~Database() {
-    if (db_ != nullptr) sqlite3_close(db_);
+    if (db_ != nullptr) {
+        sqlite3_close(db_);
+    }
 }
 
 void Database::execute(const std::string& sql) {
@@ -62,7 +65,9 @@ void Database::execute(const std::string& sql) {
     }
 }
 
-long long Database::lastInsertId() const { return sqlite3_last_insert_rowid(db_); }
+long long Database::lastInsertId() const {
+    return sqlite3_last_insert_rowid(db_);
+}
 
 void Database::runInTransaction(const std::function<void()>& work) {
     TransactionScope scope(*this);
@@ -92,7 +97,9 @@ void Database::leaveTransaction() {
 
 void Database::abortTransaction() noexcept {
     failed_ = true;
-    if (depth_ > 0) --depth_;
+    if (depth_ > 0) {
+        --depth_;
+    }
     if (depth_ == 0) {
         failed_ = false;
         sqlite3_exec(db_, "ROLLBACK;", nullptr, nullptr, nullptr);
@@ -105,7 +112,9 @@ Statement::Statement(const Database& db, const std::string& sql) : db_(db.handle
     }
 }
 
-Statement::~Statement() { sqlite3_finalize(stmt_); }
+Statement::~Statement() {
+    sqlite3_finalize(stmt_);
+}
 
 void Statement::check(int resultCode) const {
     if (resultCode != SQLITE_OK && resultCode != SQLITE_ROW && resultCode != SQLITE_DONE) {
@@ -139,8 +148,12 @@ Statement& Statement::bindNull(int index) {
 
 bool Statement::step() {
     const int rc = sqlite3_step(stmt_);
-    if (rc == SQLITE_ROW) return true;
-    if (rc == SQLITE_DONE) return false;
+    if (rc == SQLITE_ROW) {
+        return true;
+    }
+    if (rc == SQLITE_DONE) {
+        return false;
+    }
     throw DatabaseError(messageFor(db_, "Database error"));
 }
 
@@ -149,17 +162,23 @@ void Statement::run() {
     }
 }
 
-int Statement::columnInt(int column) const { return sqlite3_column_int(stmt_, column); }
+int Statement::columnInt(int column) const {
+    return sqlite3_column_int(stmt_, column);
+}
 
 std::string Statement::columnText(int column) const {
     const unsigned char* text = sqlite3_column_text(stmt_, column);
     return text != nullptr ? reinterpret_cast<const char*>(text) : std::string();
 }
 
-bool Statement::columnIsNull(int column) const { return sqlite3_column_type(stmt_, column) == SQLITE_NULL; }
+bool Statement::columnIsNull(int column) const {
+    return sqlite3_column_type(stmt_, column) == SQLITE_NULL;
+}
 
 std::optional<int> Statement::columnOptionalInt(int column) const {
-    if (columnIsNull(column)) return std::nullopt;
+    if (columnIsNull(column)) {
+        return std::nullopt;
+    }
     return columnInt(column);
 }
 

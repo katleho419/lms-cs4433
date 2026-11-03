@@ -1,6 +1,7 @@
 #include "service/MarkingService.hpp"
 
 #include "service/AccessControl.hpp"
+#include "service/TransactionResult.hpp"
 #include "util/Errors.hpp"
 #include "util/Validation.hpp"
 
@@ -9,7 +10,9 @@ namespace lms {
 std::vector<Submission> MarkingService::submissionsFor(const User& lecturer, int assignmentId) const {
     requirePermission(lecturer, Permission::MarkSubmission, "mark submissions");
     const std::optional<Assignment> assignment = assignments_.findById(assignmentId);
-    if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+    if (!assignment) {
+        throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+    }
     access_.requireLecturerOf(lecturer, assignment->getCourseId());
     return submissions_.findCurrentByAssignment(assignmentId);
 }
@@ -22,11 +25,15 @@ Submission MarkingService::mark(const User& lecturer, int submissionId, int rawM
     std::optional<Submission> result;
     unitOfWork_.runInTransaction([&] {
         std::optional<Submission> found = submissions_.findById(submissionId);
-        if (!found) throw NotFoundError("There is no submission with id " + std::to_string(submissionId) + ".");
+        if (!found) {
+            throw NotFoundError("There is no submission with id " + std::to_string(submissionId) + ".");
+        }
         Submission submission = *found;
 
         const std::optional<Assignment> assignment = assignments_.findById(submission.getAssignmentId());
-        if (!assignment) throw NotFoundError("The assignment for this submission no longer exists.");
+        if (!assignment) {
+            throw NotFoundError("The assignment for this submission no longer exists.");
+        }
         access_.requireLecturerOf(lecturer, assignment->getCourseId());
 
         const std::optional<Submission> latest =
@@ -47,7 +54,9 @@ Submission MarkingService::mark(const User& lecturer, int submissionId, int rawM
             throw ValidationError("A reason is required when changing a mark.");
         }
         const std::optional<int> oldFinal = submission.getFinalMark();
-        if (why.empty()) why = oldFinal ? "Re-marked after return to lecturer" : "Initial marking";
+        if (why.empty()) {
+            why = oldFinal ? "Re-marked after return to lecturer" : "Initial marking";
+        }
 
         const int finalMark = penalty_.calculate(rawMark, assignment->getMaxMark(), submission.getLateDays());
         submission.applyMark(rawMark, finalMark, cleanFeedback);
@@ -57,7 +66,7 @@ Submission MarkingService::mark(const User& lecturer, int submissionId, int rawM
                           std::to_string(submission.getLateDays()) + " late day(s))");
         result = submission;
     });
-    return *result;
+    return takeResult(result);
 }
 
 }  // namespace lms
