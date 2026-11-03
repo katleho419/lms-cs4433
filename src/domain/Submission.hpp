@@ -58,6 +58,11 @@ public:
     // Students see marks and feedback only after release.
     bool isVisibleToStudent() const { return status_ == SubmissionStatus::Released; }
 
+    // The copy a student may see (BR-05). Until the work is released, marks and
+    // feedback are removed and the status shows only "submitted" or "late", so
+    // a student cannot learn how far marking or moderation has progressed.
+    Submission redactedForStudent() const;
+
 private:
     int id_;
     int assignmentId_;

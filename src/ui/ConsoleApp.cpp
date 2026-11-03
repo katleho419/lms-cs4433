@@ -405,14 +405,43 @@ void ConsoleApp::hodMenu(const UserPtr& user) {
                 case 5: {
                     int id = 0;
                     if (!readInt("Submission id: ", id)) return;
-                    s_.moderation.approve(*self, id);
+                    const Submission seen = s_.moderation.review(*self, id);
+                    if (!seen.getFinalMark()) throw BusinessRuleError("That work has not been marked yet.");
+                    out_ << "  " << nameOf(seen.getStudentId()) << ": raw " << *seen.getRawMark() << ", final "
+                         << *seen.getFinalMark() << ", feedback: " << seen.getFeedback() << "\n";
+                    std::string answer;
+                    if (!readLine("Approve this mark? (y/n): ", answer)) return;
+                    if (trim(answer) != "y") {
+                        out_ << "  Not approved.\n";
+                        break;
+                    }
+                    s_.moderation.approve(*self, id, *seen.getFinalMark());
                     out_ << "  Approved.\n";
                     break;
                 }
                 case 6: {
                     int a = 0;
                     if (!readInt("Assignment id: ", a)) return;
-                    out_ << "  Approved " << s_.moderation.approveAll(*self, a) << " submission(s).\n";
+                    std::vector<ReviewedMark> reviewed;
+                    const auto list = s_.moderation.reviewMarks(*self, a);
+                    printSubmissions(list);
+                    for (const auto& sub : list) {
+                        if (sub.getStatus() == SubmissionStatus::Marked) reviewed.push_back({sub.getId(), *sub.getFinalMark()});
+                    }
+                    if (reviewed.empty()) {
+                        out_ << "  No marked submissions.\n";
+                        break;
+                    }
+                    std::string answer;
+                    if (!readLine("Approve the " + std::to_string(reviewed.size()) + " marked submission(s) shown above? (y/n): ", answer)) return;
+                    if (trim(answer) != "y") {
+                        out_ << "  Not approved.\n";
+                        break;
+                    }
+                    const ApproveResult r = s_.moderation.approveReviewed(*self, a, reviewed);
+                    out_ << "  Approved " << r.approved << " submission(s).";
+                    if (r.skipped > 0) out_ << " " << r.skipped << " changed after you reviewed them and were skipped.";
+                    out_ << "\n";
                     break;
                 }
                 case 7: {

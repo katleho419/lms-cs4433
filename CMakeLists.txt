@@ -14,7 +14,8 @@ option(LMS_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(LMS_ENABLE_TEST_CLOCK
        "Allow the LMS_FAKE_NOW environment variable to set the clock. FOR TESTING ONLY: never enable in a release build."
        OFF)
-option(LMS_BUILD_TESTS "Build the smoke tests" ON)
+option(LMS_BUILD_TESTS "Build the GoogleTest test suite (needs GoogleTest or network access)" OFF)
+option(LMS_ENABLE_COVERAGE "Instrument the code for gcov line coverage (GCC/Clang only)" OFF)
 
 find_package(SQLite3 REQUIRED)
 find_package(OpenSSL 3.0 REQUIRED)
@@ -78,3 +79,13 @@ if(LMS_ENABLE_TEST_CLOCK)
   target_compile_definitions(lms PRIVATE LMS_ENABLE_TEST_CLOCK)
 endif()
 install(TARGETS lms RUNTIME DESTINATION bin)
+
+if(LMS_ENABLE_COVERAGE AND NOT MSVC)
+  target_compile_options(lms_core PRIVATE --coverage -O0 -g)
+  target_link_libraries(lms_core PUBLIC --coverage)
+endif()
+
+if(LMS_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
