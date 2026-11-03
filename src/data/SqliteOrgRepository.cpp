@@ -8,14 +8,18 @@ namespace {
 const char* const kSelectCourse = "SELECT c.id, c.code, c.title, c.department_id FROM course c ";
 
 Course toCourse(const Statement& row) {
-    return Course(row.columnInt(0), row.columnText(1), row.columnText(2), row.columnInt(3));
+    return {row.columnInt(0), row.columnText(1), row.columnText(2), row.columnInt(3)};
 }
 
-Department toDepartment(const Statement& row) { return Department(row.columnInt(0), row.columnText(1)); }
+Department toDepartment(const Statement& row) {
+    return {row.columnInt(0), row.columnText(1)};
+}
 
 std::vector<Course> readAll(Statement& query) {
     std::vector<Course> courses;
-    while (query.step()) courses.push_back(toCourse(query));
+    while (query.step()) {
+        courses.push_back(toCourse(query));
+    }
     return courses;
 }
 
@@ -26,21 +30,27 @@ std::vector<Course> readAll(Statement& query) {
 std::optional<Department> SqliteDepartmentRepository::findById(int id) const {
     Statement query(db_, "SELECT id, name FROM department WHERE id = ?");
     query.bind(1, id);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toDepartment(query);
 }
 
 std::optional<Department> SqliteDepartmentRepository::findByName(const std::string& name) const {
     Statement query(db_, "SELECT id, name FROM department WHERE name = ?");
     query.bind(1, name);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toDepartment(query);
 }
 
 std::vector<Department> SqliteDepartmentRepository::findAll() const {
     Statement query(db_, "SELECT id, name FROM department ORDER BY name");
     std::vector<Department> departments;
-    while (query.step()) departments.push_back(toDepartment(query));
+    while (query.step()) {
+        departments.push_back(toDepartment(query));
+    }
     return departments;
 }
 
@@ -62,14 +72,18 @@ void SqliteDepartmentRepository::save(Department& department) {
 std::optional<Course> SqliteCourseRepository::findById(int id) const {
     Statement query(db_, std::string(kSelectCourse) + "WHERE c.id = ?");
     query.bind(1, id);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toCourse(query);
 }
 
 std::optional<Course> SqliteCourseRepository::findByCode(const std::string& code) const {
     Statement query(db_, std::string(kSelectCourse) + "WHERE c.code = ?");
     query.bind(1, code);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toCourse(query);
 }
 
@@ -144,7 +158,9 @@ std::vector<int> SqliteCourseRepository::studentIdsOf(int courseId) const {
     Statement query(db_, "SELECT student_id FROM enrolment WHERE course_id = ? ORDER BY student_id");
     query.bind(1, courseId);
     std::vector<int> ids;
-    while (query.step()) ids.push_back(query.columnInt(0));
+    while (query.step()) {
+        ids.push_back(query.columnInt(0));
+    }
     return ids;
 }
 

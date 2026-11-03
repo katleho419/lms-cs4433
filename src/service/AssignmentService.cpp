@@ -14,7 +14,9 @@ Assignment AssignmentService::createAssignment(const User& actor, int courseId, 
 
     Assignment assignment(0, courseId, requireText(title, "The title", 100), deadline,
                           requireRange(maxMark, "The maximum mark", 1, kMaxMarkLimit));
-    if (deadline <= clock_.now()) throw ValidationError("The deadline must be in the future.");
+    if (deadline <= clock_.now()) {
+        throw ValidationError("The deadline must be in the future.");
+    }
     assignments_.save(assignment);
     return assignment;
 }
@@ -41,7 +43,9 @@ std::vector<Assignment> AssignmentService::assignmentsForCourse(const User& acto
 
 Assignment AssignmentService::getAssignment(const User& actor, int assignmentId) const {
     const std::optional<Assignment> assignment = assignments_.findById(assignmentId);
-    if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+    if (!assignment) {
+        throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+    }
     access_.requireCanSee(actor, access_.requireCourse(assignment->getCourseId()));
     return *assignment;
 }

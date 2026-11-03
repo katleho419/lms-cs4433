@@ -52,11 +52,13 @@ public:
 
     // MARKED -> MODERATED. If reviewedFinalMark is given and the stored mark is
     // different, the work changed after the review and nothing is approved (UC-03 E4).
-    Submission approve(const User& hod, int submissionId, std::optional<int> reviewedFinalMark = std::nullopt);
+    Submission approve(const User& hod, int submissionId,
+                       std::optional<int> reviewedFinalMark = std::nullopt);
     // Approves every MARKED submission of the assignment. Returns how many.
     int approveAll(const User& hod, int assignmentId);
     // Approves only the MARKED submissions whose mark still equals the reviewed one.
-    ApproveResult approveReviewed(const User& hod, int assignmentId, const std::vector<ReviewedMark>& reviewed);
+    ApproveResult approveReviewed(const User& hod, int assignmentId,
+                                  const std::vector<ReviewedMark>& reviewed);
 
     // MARKED -> SUBMITTED or LATE so the lecturer can mark again.
     Submission returnToLecturer(const User& hod, int submissionId, const std::string& comment);

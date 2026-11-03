@@ -24,7 +24,7 @@ UserPtr toUser(const Statement& row) {
     record.role = roleFromString(row.columnText(5));
     record.studentNumber = row.columnText(6);
     record.departmentId = row.columnIsNull(7) ? 0 : row.columnInt(7);
-    return UserPtr(UserFactory::restore(record));
+    return UserFactory::restore(record);
 }
 
 }  // namespace
@@ -32,7 +32,9 @@ UserPtr toUser(const Statement& row) {
 std::optional<UserPtr> SqliteUserRepository::findById(int id) const {
     Statement query(db_, std::string(kSelectUser) + "WHERE u.id = ?");
     query.bind(1, id);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toUser(query);
 }
 
@@ -40,7 +42,9 @@ std::optional<UserPtr> SqliteUserRepository::findOne(const std::string& whereCla
                                                      const std::string& value) const {
     Statement query(db_, std::string(kSelectUser) + whereClause);
     query.bind(1, value);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toUser(query);
 }
 
@@ -55,14 +59,18 @@ std::optional<UserPtr> SqliteUserRepository::findByStudentNumber(const std::stri
 std::optional<UserPtr> SqliteUserRepository::findHeadOfDepartment(int departmentId) const {
     Statement query(db_, std::string(kSelectUser) + "WHERE st.role = 'HOD' AND st.department_id = ?");
     query.bind(1, departmentId);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toUser(query);
 }
 
 std::vector<UserPtr> SqliteUserRepository::findAll() const {
     Statement query(db_, std::string(kSelectUser) + "ORDER BY u.id");
     std::vector<UserPtr> users;
-    while (query.step()) users.push_back(toUser(query));
+    while (query.step()) {
+        users.push_back(toUser(query));
+    }
     return users;
 }
 
@@ -105,7 +113,9 @@ void SqliteUserRepository::save(UserPtr& user) {
         update.run();
     }
     scope.commit();
-    if (newId != 0) user->assignId(newId);
+    if (newId != 0) {
+        user->assignId(newId);
+    }
 }
 
 }  // namespace lms

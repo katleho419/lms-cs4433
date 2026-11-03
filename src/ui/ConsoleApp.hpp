@@ -33,11 +33,44 @@ public:
     void run();
 
 private:
-    // One menu loop per role.
+    // One menu loop per role. Each loop prints its menu text and hands the choice to a dispatcher,
+    // which calls one small method per action.
+    using MenuAction = void (ConsoleApp::*)(UserPtr& self, int choice);
+    void runMenu(const UserPtr& user, const std::string& menuText, MenuAction action);
+
     void adminMenu(const UserPtr& user);
+    void adminAction(UserPtr& self, int choice);
+    void adminCreateDepartment(const User& self);
+    void adminCreateCourse(const User& self);
+    void adminCreateUser(const User& self);
+    void adminListUsers(const User& self);
+    void adminAssignLecturer(const User& self);
+    void adminEnrolStudent(const User& self);
+
     void lecturerMenu(const UserPtr& user);
+    void lecturerAction(UserPtr& self, int choice);
+    void lecturerCreateAssignment(const User& self);
+    void lecturerGrantExtension(const User& self);
+    void lecturerViewSubmissions(const User& self);
+    void lecturerMark(const User& self);
+
     void hodMenu(const UserPtr& user);
+    void hodAction(UserPtr& self, int choice);
+    void hodReviewMarks(const User& self);
+    void hodAdjustMark(const User& self);
+    void hodApproveOne(const User& self);
+    void hodApproveAll(const User& self);
+    void hodReturnToLecturer(const User& self);
+    void hodRelease(const User& self);
+    void hodAudit(const User& self);
+
     void studentMenu(const UserPtr& user);
+    void studentAction(UserPtr& self, int choice);
+    void studentShowAssignments(const User& self);
+    void studentSubmit(const User& self);
+
+    void listAssignmentsOfChosenCourse(const User& self);
+    void printDepartments();
 
     void firstRunSetup();
     void changePassword(UserPtr& user);

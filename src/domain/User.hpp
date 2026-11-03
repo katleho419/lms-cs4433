@@ -54,8 +54,8 @@ public:
 
 class Lecturer : public User {
 public:
-    Lecturer(int id, std::string username, std::string passwordHash, std::string salt,
-             std::string fullName, int departmentId);
+    Lecturer(int id, std::string username, std::string passwordHash, std::string salt, std::string fullName,
+             int departmentId);
     Role getRole() const override { return Role::Lecturer; }
     bool can(Permission permission) const override;
     int getDepartmentId() const override { return departmentId_; }
@@ -78,8 +78,8 @@ private:
 
 class Student : public User {
 public:
-    Student(int id, std::string username, std::string passwordHash, std::string salt,
-            std::string fullName, std::string studentNumber);
+    Student(int id, std::string username, std::string passwordHash, std::string salt, std::string fullName,
+            std::string studentNumber);
     Role getRole() const override { return Role::Student; }
     bool can(Permission permission) const override;
     const std::string& getStudentNumber() const { return studentNumber_; }

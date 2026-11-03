@@ -20,7 +20,8 @@ public:
     std::vector<UserPtr> listUsers(const User& actor) const;
 
     Department createDepartment(const User& actor, const std::string& name);
-    Course createCourse(const User& actor, const std::string& code, const std::string& title, int departmentId);
+    Course createCourse(const User& actor, const std::string& code, const std::string& title,
+                        int departmentId);
 
     // The lecturer must work in the course's department.
     void assignLecturer(const User& actor, int courseId, int lecturerId);

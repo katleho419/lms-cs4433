@@ -14,9 +14,10 @@ void validateUsername(const std::string& username) {
     if (username.size() < 3 || username.size() > 32) {
         throw ValidationError("The username must be 3 to 32 characters long.");
     }
-    for (char c : username) {
-        const unsigned char u = static_cast<unsigned char>(c);
-        if (!(std::isalnum(u) || c == '_' || c == '.' || c == '-')) {
+    for (const char c : username) {
+        const auto u = static_cast<unsigned char>(c);
+        const bool allowedChar = std::isalnum(u) != 0 || c == '_' || c == '.' || c == '-';
+        if (!allowedChar) {
             throw ValidationError("The username may only contain letters, digits, '_', '.' and '-'.");
         }
     }
@@ -62,8 +63,8 @@ std::unique_ptr<User> UserFactory::restore(const UserRecord& r) {
             return std::make_unique<Lecturer>(r.id, r.username, r.passwordHash, r.salt, r.fullName,
                                               r.departmentId);
         case Role::Hod:
-            return std::make_unique<HeadOfDepartment>(r.id, r.username, r.passwordHash, r.salt,
-                                                      r.fullName, r.departmentId);
+            return std::make_unique<HeadOfDepartment>(r.id, r.username, r.passwordHash, r.salt, r.fullName,
+                                                      r.departmentId);
         case Role::Student:
             return std::make_unique<Student>(r.id, r.username, r.passwordHash, r.salt, r.fullName,
                                              r.studentNumber);

@@ -29,7 +29,9 @@ bool User::verifyPassword(const std::string& plain) const {
 }
 
 void User::changePassword(const std::string& oldPassword, const std::string& newPassword) {
-    if (!verifyPassword(oldPassword)) throw AuthenticationError("The current password is not correct.");
+    if (!verifyPassword(oldPassword)) {
+        throw AuthenticationError("The current password is not correct.");
+    }
     PasswordPolicy::validate(newPassword, username_);
     const std::string newSalt = PasswordHasher::generateSalt();
     passwordHash_ = PasswordHasher::hash(newPassword, newSalt);
@@ -37,9 +39,9 @@ void User::changePassword(const std::string& oldPassword, const std::string& new
 }
 
 bool Administrator::can(Permission permission) const {
-    return isOneOf(permission, {Permission::ManageAccounts, Permission::ManageDepartments,
-                                Permission::ManageCourses, Permission::AssignLecturers,
-                                Permission::EnrolStudents});
+    return isOneOf(permission,
+                   {Permission::ManageAccounts, Permission::ManageDepartments, Permission::ManageCourses,
+                    Permission::AssignLecturers, Permission::EnrolStudents});
 }
 
 Lecturer::Lecturer(int id, std::string username, std::string passwordHash, std::string salt,
@@ -52,8 +54,8 @@ bool Lecturer::can(Permission permission) const {
                    {Permission::CreateAssignment, Permission::GrantExtension, Permission::MarkSubmission});
 }
 
-HeadOfDepartment::HeadOfDepartment(int id, std::string username, std::string passwordHash,
-                                   std::string salt, std::string fullName, int departmentId)
+HeadOfDepartment::HeadOfDepartment(int id, std::string username, std::string passwordHash, std::string salt,
+                                   std::string fullName, int departmentId)
     : User(id, std::move(username), std::move(passwordHash), std::move(salt), std::move(fullName)),
       departmentId_(departmentId) {}
 

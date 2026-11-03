@@ -1,6 +1,7 @@
 #include "service/SubmissionService.hpp"
 
 #include "service/AccessControl.hpp"
+#include "service/TransactionResult.hpp"
 #include "util/Errors.hpp"
 #include "util/Validation.hpp"
 
@@ -8,7 +9,9 @@ namespace lms {
 
 int SubmissionService::computeLateDays(const DateTime& deadline, const DateTime& now) {
     const std::int64_t late = now.secondsSince(deadline);
-    if (late <= 0) return 0;
+    if (late <= 0) {
+        return 0;
+    }
     return static_cast<int>((late + kSecondsPerDay - 1) / kSecondsPerDay);
 }
 
@@ -22,7 +25,9 @@ DateTime SubmissionService::effectiveDeadlineFor(const Assignment& assignment, i
 
 Submission SubmissionService::submit(const User& student, int assignmentId, const std::string& content) {
     requirePermission(student, Permission::SubmitWork, "submit work");
-    if (trim(content).empty()) throw ValidationError("The submission must not be empty.");
+    if (trim(content).empty()) {
+        throw ValidationError("The submission must not be empty.");
+    }
     if (content.size() > kMaxContentBytes) {
         throw ValidationError("The submission is too large (the limit is " +
                               std::to_string(kMaxContentBytes) + " characters).");
@@ -31,7 +36,9 @@ Submission SubmissionService::submit(const User& student, int assignmentId, cons
     std::optional<Submission> saved;
     unitOfWork_.runInTransaction([&] {
         const std::optional<Assignment> assignment = assignments_.findById(assignmentId);
-        if (!assignment) throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+        if (!assignment) {
+            throw NotFoundError("There is no assignment with id " + std::to_string(assignmentId) + ".");
+        }
         if (!courses_.isEnrolled(assignment->getCourseId(), student.getId())) {
             throw AuthorizationError("You are not enrolled in the course for this assignment.");
         }
@@ -44,7 +51,8 @@ Submission SubmissionService::submit(const User& student, int assignmentId, cons
             if (!previous->canResubmit(now, deadline)) {
                 if (previous->getStatus() != SubmissionStatus::Submitted) {
                     throw BusinessRuleError(
-                        "Your work was submitted late or has already been marked, so it can no longer be replaced.");
+                        "Your work was submitted late or has already been marked, so it can no longer be "
+                        "replaced.");
                 }
                 throw BusinessRuleError("The deadline has passed, so you can no longer resubmit.");
             }
@@ -58,7 +66,7 @@ Submission SubmissionService::submit(const User& student, int assignmentId, cons
         submissions_.save(submission);
         saved = submission;
     });
-    return *saved;
+    return takeResult(saved);
 }
 
 std::vector<AssignmentRow> SubmissionService::assignmentsFor(const User& student) const {
@@ -67,7 +75,9 @@ std::vector<AssignmentRow> SubmissionService::assignmentsFor(const User& student
     for (const Course& course : courses_.findByStudent(student.getId())) {
         for (const Assignment& assignment : assignments_.findByCourse(course.getId())) {
             std::optional<Submission> current = submissions_.findLatest(assignment.getId(), student.getId());
-            if (current) current = current->redactedForStudent();  // BR-05: no marks before release
+            if (current) {
+                current = current->redactedForStudent();  // BR-05: no marks before release
+            }
             rows.push_back({assignment, course.getCode(), current});
         }
     }

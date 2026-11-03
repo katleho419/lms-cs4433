@@ -14,15 +14,24 @@ const char* const kCurrentOnly =
     "WHERE s2.assignment_id = s.assignment_id AND s2.student_id = s.student_id) ";
 
 Submission toSubmission(const Statement& row) {
-    return Submission(row.columnInt(0), row.columnInt(1), row.columnInt(2), row.columnInt(3),
-                      row.columnText(4), DateTime::parseIso(row.columnText(5)),
-                      submissionStatusFromString(row.columnText(6)), row.columnInt(7),
-                      row.columnOptionalInt(8), row.columnOptionalInt(9), row.columnText(10));
+    return {row.columnInt(0),
+            row.columnInt(1),
+            row.columnInt(2),
+            row.columnInt(3),
+            row.columnText(4),
+            DateTime::parseIso(row.columnText(5)),
+            submissionStatusFromString(row.columnText(6)),
+            row.columnInt(7),
+            row.columnOptionalInt(8),
+            row.columnOptionalInt(9),
+            row.columnText(10)};
 }
 
 std::vector<Submission> readAll(Statement& query) {
     std::vector<Submission> submissions;
-    while (query.step()) submissions.push_back(toSubmission(query));
+    while (query.step()) {
+        submissions.push_back(toSubmission(query));
+    }
     return submissions;
 }
 
@@ -31,13 +40,15 @@ std::vector<Submission> readAll(Statement& query) {
 std::optional<Submission> SqliteSubmissionRepository::findById(int id) const {
     Statement query(db_, std::string(kSelectSubmission) + "WHERE s.id = ?");
     query.bind(1, id);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toSubmission(query);
 }
 
 std::vector<Submission> SqliteSubmissionRepository::findByAssignment(int assignmentId) const {
-    Statement query(db_, std::string(kSelectSubmission) +
-                             "WHERE s.assignment_id = ? ORDER BY s.student_id, s.version");
+    Statement query(
+        db_, std::string(kSelectSubmission) + "WHERE s.assignment_id = ? ORDER BY s.student_id, s.version");
     query.bind(1, assignmentId);
     return readAll(query);
 }
@@ -54,7 +65,9 @@ std::optional<Submission> SqliteSubmissionRepository::findLatest(int assignmentI
                              "WHERE s.assignment_id = ? AND s.student_id = ? "
                              "ORDER BY s.version DESC LIMIT 1");
     query.bind(1, assignmentId).bind(2, studentId);
-    if (!query.step()) return std::nullopt;
+    if (!query.step()) {
+        return std::nullopt;
+    }
     return toSubmission(query);
 }
 
