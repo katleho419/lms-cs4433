@@ -31,6 +31,26 @@ private:
     ISubmissionRepository& real_;
 };
 
+// Forwards everything to the real repository, but fails on the second saveExtension call.
+class FailOnSecondExtensionRepository : public IAssignmentRepository {
+public:
+    explicit FailOnSecondExtensionRepository(IAssignmentRepository& real) : real_(real) {}
+    std::optional<Assignment> findById(int id) const override { return real_.findById(id); }
+    void save(Assignment& a) override { real_.save(a); }
+    std::vector<Assignment> findByCourse(int c) const override { return real_.findByCourse(c); }
+    std::optional<Extension> findExtension(int a, int s) const override { return real_.findExtension(a, s); }
+    void saveExtension(Extension& e) override {
+        if (++calls_ == 2) {
+            throw DatabaseError("simulated disk failure");
+        }
+        real_.saveExtension(e);
+    }
+
+private:
+    IAssignmentRepository& real_;
+    int calls_ = 0;
+};
+
 int auditCount(World& w) {
     Statement q(w.db, "SELECT COUNT(*) FROM audit_entry");
     q.step();
@@ -265,6 +285,104 @@ TEST(AssignmentService, GrantExtensionRules) {
     EXPECT_EQ(e.getGrantedBy(), w.lec->getId());
 }
 
+// ===== CR1: extension for the whole class =================================================
+
+TEST(CR1_ClassExtension, OnlyTheLecturerOfTheCourseMayGrantIt) {
+    World w;
+    const int a = w.assignment.getId();
+    const DateTime ok = w.deadline().plusSeconds(kDay);
+    EXPECT_THROW(w.assignments.grantClassExtension(*w.stu1, a, ok), AuthorizationError);
+    EXPECT_THROW(w.assignments.grantClassExtension(*w.hod, a, ok), AuthorizationError);
+    EXPECT_THROW(w.assignments.grantClassExtension(*w.lec2, a, ok), AuthorizationError);  // not this course
+    EXPECT_THROW(w.assignments.grantClassExtension(*w.lec, 9999, ok), NotFoundError);
+    EXPECT_FALSE(w.assignmentRepo.findExtension(a, w.stu1->getId()).has_value());  // nothing changed
+}
+
+TEST(CR1_ClassExtension, NewDeadlineMustBeLaterThanTheAssignmentDeadline) {
+    World w;
+    const int a = w.assignment.getId();
+    EXPECT_THROW_MSG(w.assignments.grantClassExtension(*w.lec, a, w.deadline()), ValidationError, "later than");
+    EXPECT_THROW(w.assignments.grantClassExtension(*w.lec, a, w.deadline().plusSeconds(-1)), ValidationError);
+    EXPECT_FALSE(w.assignmentRepo.findExtension(a, w.stu1->getId()).has_value());
+    EXPECT_NO_THROW(w.assignments.grantClassExtension(*w.lec, a, w.deadline().plusSeconds(1)));  // boundary
+}
+
+TEST(CR1_ClassExtension, EveryEnrolledStudentGetsTheNewDeadlineAndNobodyElse) {
+    World w;
+    const int a = w.assignment.getId();
+    const DateTime ext = w.deadline().plusSeconds(2 * kDay);
+    const ClassExtensionResult r = w.assignments.grantClassExtension(*w.lec, a, ext);
+    EXPECT_EQ(r.extended, 2);
+    EXPECT_EQ(r.unchanged, 0);
+    EXPECT_EQ(w.assignmentRepo.findExtension(a, w.stu1->getId())->getNewDeadline(), ext);
+    EXPECT_EQ(w.assignmentRepo.findExtension(a, w.stu2->getId())->getNewDeadline(), ext);
+    EXPECT_EQ(w.assignmentRepo.findExtension(a, w.stu1->getId())->getGrantedBy(), w.lec->getId());
+    EXPECT_FALSE(w.assignmentRepo.findExtension(a, w.stu3->getId()).has_value());  // not enrolled
+}
+
+TEST(CR1_ClassExtension, ARepeatedGrantIsHarmless) {
+    World w;
+    const int a = w.assignment.getId();
+    const DateTime ext = w.deadline().plusSeconds(kDay);
+    w.assignments.grantClassExtension(*w.lec, a, ext);
+    const ClassExtensionResult again = w.assignments.grantClassExtension(*w.lec, a, ext);
+    EXPECT_EQ(again.extended, 0);
+    EXPECT_EQ(again.unchanged, 2);
+    EXPECT_EQ(w.assignmentRepo.findExtension(a, w.stu1->getId())->getNewDeadline(), ext);
+}
+
+TEST(CR1_ClassExtension, ALongerIndividualExtensionIsNeverShortened) {
+    World w;
+    const int a = w.assignment.getId();
+    const DateTime longer = w.deadline().plusSeconds(3 * kDay);
+    const DateTime shorter = w.deadline().plusSeconds(kDay);
+    w.assignments.grantExtension(*w.lec, a, w.stu1->getId(), longer);
+    const ClassExtensionResult r = w.assignments.grantClassExtension(*w.lec, a, shorter);
+    EXPECT_EQ(r.extended, 1);
+    EXPECT_EQ(r.unchanged, 1);
+    EXPECT_EQ(w.assignmentRepo.findExtension(a, w.stu1->getId())->getNewDeadline(), longer);  // kept
+    EXPECT_EQ(w.assignmentRepo.findExtension(a, w.stu2->getId())->getNewDeadline(), shorter);
+}
+
+TEST(CR1_ClassExtension, ALaterClassExtensionReplacesAnEarlierOne) {
+    World w;
+    const int a = w.assignment.getId();
+    w.assignments.grantExtension(*w.lec, a, w.stu1->getId(), w.deadline().plusSeconds(kDay));
+    const DateTime later = w.deadline().plusSeconds(2 * kDay);
+    const ClassExtensionResult r = w.assignments.grantClassExtension(*w.lec, a, later);
+    EXPECT_EQ(r.extended, 2);
+    EXPECT_EQ(w.assignmentRepo.findExtension(a, w.stu1->getId())->getNewDeadline(), later);
+}
+
+TEST(CR1_ClassExtension, ACourseWithNoStudentsIsRefused) {
+    World w;
+    const Course empty = w.admin.createCourse(*w.adminU, "CS9999", "Empty course", w.dept.getId());
+    w.admin.assignLecturer(*w.adminU, empty.getId(), w.lec->getId());
+    const Assignment a =
+        w.assignments.createAssignment(*w.lec, empty.getId(), "Nobody here", kNow.plusSeconds(kDay), 10);
+    EXPECT_THROW_MSG(w.assignments.grantClassExtension(*w.lec, a.getId(), a.getDeadline().plusSeconds(kDay)),
+                     BusinessRuleError, "No students are enrolled");
+}
+
+TEST(CR1_ClassExtension, IsAllOrNothingWhenTheDatabaseFailsHalfWay) {
+    World w;
+    FailOnSecondExtensionRepository failing(w.assignmentRepo);
+    AssignmentService service(failing, w.courses, w.courseSvc, w.clock, w.db);
+    const int a = w.assignment.getId();
+    EXPECT_THROW(service.grantClassExtension(*w.lec, a, w.deadline().plusSeconds(kDay)), DatabaseError);
+    // The first student's extension was saved inside the transaction, so it must have been rolled back.
+    EXPECT_FALSE(w.assignmentRepo.findExtension(a, w.stu1->getId()).has_value());
+    EXPECT_FALSE(w.assignmentRepo.findExtension(a, w.stu2->getId()).has_value());
+}
+
+TEST(CR1_ClassExtension, MakesLateWorkOnTimeForEveryEnrolledStudent) {
+    World w;
+    w.assignments.grantClassExtension(*w.lec, w.assignment.getId(), w.deadline().plusSeconds(2 * kDay));
+    const DateTime between = w.deadline().plusSeconds(kDay);
+    EXPECT_EQ(w.submitAs(w.stu1, between).getLateDays(), 0);
+    EXPECT_EQ(w.submitAs(w.stu2, between).getLateDays(), 0);
+}
+
 TEST(AssignmentService, VisibilityFollowsCourseMembership) {
     World w;
     EXPECT_EQ(w.assignments.assignmentsForCourse(*w.stu1, w.course.getId()).size(), 1u);
@@ -413,6 +531,24 @@ TEST(UC01_BR01_Submit, ExtensionChangesTheEffectiveDeadline) {
     x.assignments.grantExtension(*x.lec, x.assignment.getId(), x.stu1->getId(), x.deadline().plusSeconds(2 * kDay));
     x.submitAs(x.stu1, x.deadline().plusSeconds(-10));
     EXPECT_NO_THROW(x.submitAs(x.stu1, x.deadline().plusSeconds(kDay)));
+}
+
+TEST(CR1_AssignmentList, EachStudentSeesTheirOwnEffectiveDeadline) {
+    World w;
+    const int a = w.assignment.getId();
+    // No extension: the list shows the assignment's own deadline.
+    EXPECT_EQ(w.submissions.assignmentsFor(*w.stu1)[0].effectiveDeadline, w.deadline());
+    // One student's extension is visible to that student only.
+    const DateTime one = w.deadline().plusSeconds(kDay);
+    w.assignments.grantExtension(*w.lec, a, w.stu1->getId(), one);
+    EXPECT_EQ(w.submissions.assignmentsFor(*w.stu1)[0].effectiveDeadline, one);
+    EXPECT_EQ(w.submissions.assignmentsFor(*w.stu2)[0].effectiveDeadline, w.deadline());
+    // A class extension reaches everybody; the assignment's own deadline is unchanged.
+    const DateTime all = w.deadline().plusSeconds(2 * kDay);
+    w.assignments.grantClassExtension(*w.lec, a, all);
+    EXPECT_EQ(w.submissions.assignmentsFor(*w.stu1)[0].effectiveDeadline, all);
+    EXPECT_EQ(w.submissions.assignmentsFor(*w.stu2)[0].effectiveDeadline, all);
+    EXPECT_EQ(w.submissions.assignmentsFor(*w.stu2)[0].assignment.getDeadline(), w.deadline());
 }
 
 TEST(UC01_AssignmentList, ShowsEachAssignmentWithTheStudentsCurrentSubmission) {

@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
         lms::AuthService auth(users);
         lms::AdminService admin(users, departments, courses);
         lms::CourseService courseService(users, departments, courses);
-        lms::AssignmentService assignments(assignmentRepo, courses, courseService, clock);
+        lms::AssignmentService assignments(assignmentRepo, courses, courseService, clock, db);
         lms::SubmissionService submissions(submissionRepo, assignmentRepo, courses, clock, db);
         lms::AuditService audit(auditRepo, clock);
         lms::MarkingService marking(submissionRepo, assignmentRepo, courseService, penalty, audit, db);

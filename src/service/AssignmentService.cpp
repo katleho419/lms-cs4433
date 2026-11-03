@@ -37,6 +37,35 @@ Extension AssignmentService::grantExtension(const User& actor, int assignmentId,
     return extension;
 }
 
+ClassExtensionResult AssignmentService::grantClassExtension(const User& actor, int assignmentId,
+                                                            const DateTime& newDeadline) {
+    requirePermission(actor, Permission::GrantExtension, "grant extensions");
+    const Assignment assignment = getAssignment(actor, assignmentId);
+    if (newDeadline <= assignment.getDeadline()) {
+        throw ValidationError("An extension must be later than the assignment deadline.");
+    }
+    const std::vector<int> students = courses_.studentIdsOf(assignment.getCourseId());
+    if (students.empty()) {
+        throw BusinessRuleError("No students are enrolled in this course.");
+    }
+
+    ClassExtensionResult result;
+    unitOfWork_.runInTransaction([&] {
+        result = ClassExtensionResult{};
+        for (const int studentId : students) {
+            const std::optional<Extension> existing = assignments_.findExtension(assignmentId, studentId);
+            if (existing && existing->getNewDeadline() >= newDeadline) {
+                ++result.unchanged;
+                continue;
+            }
+            Extension extension(0, assignmentId, studentId, newDeadline, actor.getId());
+            assignments_.saveExtension(extension);
+            ++result.extended;
+        }
+    });
+    return result;
+}
+
 std::vector<Assignment> AssignmentService::assignmentsForCourse(const User& actor, int courseId) const {
     access_.requireCanSee(actor, access_.requireCourse(courseId));
     return assignments_.findByCourse(courseId);

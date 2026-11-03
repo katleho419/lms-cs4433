@@ -78,7 +78,8 @@ std::vector<AssignmentRow> SubmissionService::assignmentsFor(const User& student
             if (current) {
                 current = current->redactedForStudent();  // BR-05: no marks before release
             }
-            rows.push_back({assignment, course.getCode(), current});
+            rows.push_back(
+                {assignment, course.getCode(), current, effectiveDeadlineFor(assignment, student.getId())});
         }
     }
     return rows;

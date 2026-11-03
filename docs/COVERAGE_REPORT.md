@@ -50,3 +50,18 @@
 | src/util/DateTime.cpp | 97 | 97 | 100.0% |
 | src/util/DateTime.hpp | 4 | 4 | 100.0% |
 | src/util/Validation.cpp | 21 | 21 | 100.0% |
+
+## Update for version 1.1.0 (change request CR1)
+
+Measured with `tools/coverage.py` after running all 221 tests (stand-in runner; see `TEST_RESULTS.md`).
+
+| Layer | Lines | Covered | Coverage |
+|---|---:|---:|---:|
+| util | 133 | 133 | 100.0% |
+| security | 113 | 108 | 95.6% |
+| domain | 305 | 299 | 98.0% |
+| service | 501 | 497 | 99.2% |
+| data | 513 | 493 | 96.1% |
+| **Business logic** | 1,052 | 1,037 | **98.6%** |
+
+The changed files, `AssignmentService.cpp` and `SubmissionService.cpp`, are at 100%. Target: 70%.

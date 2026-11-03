@@ -9,7 +9,7 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(21.6 632.6)">
 <title>deployment</title>
 <polygon fill="white" stroke="transparent" points="-21.6,21.6 -21.6,-632.6 642.6,-632.6 642.6,21.6 -21.6,21.6"/>
-<text text-anchor="middle" x="310.5" y="-597.4" font-family="Helvetica,sans-Serif" font-size="12.00">Deployment diagram: Moderated LMS, single school computer (version 1.0.0)</text>
+<text text-anchor="middle" x="310.5" y="-597.4" font-family="Helvetica,sans-Serif" font-size="12.00">Deployment diagram: Moderated LMS, single school computer (version 1.1.0)</text>
 <g id="clust1" class="cluster">
 <title>cluster_pc</title>
 <polygon fill="#f4f7fb" stroke="#33507a" points="8,-137 8,-582 613,-582 613,-137 8,-137"/>

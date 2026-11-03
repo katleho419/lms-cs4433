@@ -441,6 +441,58 @@ TEST_F(SystemTest, SYS57_ChangePassword_OldNoLongerWorks) {
 // ============================ Acceptance scenarios ==========================
 // Each scenario is a story a real user of the system must be able to complete.
 
+// ============================ CR1 Extension for the whole class ==============
+
+TEST_F(SystemTest, SYS58_ClassExtension_ThroughTheMenu_MakesLateWorkOnTimeForEveryStudent) {  // CR1
+    at_(beforeDeadline());
+    const std::string when = w.deadline().plusSeconds(2 * kDay).toLocal(0);
+    const std::string out = asLecturer(w, "4\n" + std::to_string(aid()) + "\n0\n" + when + "\n");
+    EXPECT_TRUE(has(out, "Student user id (0 for the whole class): "));
+    EXPECT_TRUE(has(out, "Extension granted to 2 student(s) until " + when + "."));
+    at_(afterDeadline(24));
+    EXPECT_FALSE(has(asStudent(w, "stu1", submitWork(aid(), "one")), "LATE"));
+    EXPECT_FALSE(has(asStudent(w, "stu2", submitWork(aid(), "two")), "LATE"));
+    EXPECT_EQ(latest(w.stu2)->getStatus(), SubmissionStatus::Submitted);
+}
+
+TEST_F(SystemTest, SYS59_StudentAssignmentList_ShowsTheExtendedDeadline) {  // CR1
+    at_(beforeDeadline());
+    const std::string original = w.deadline().toLocal(0);
+    const std::string extended = w.deadline().plusSeconds(2 * kDay).toLocal(0);
+    // Before any extension: only the original deadline, no mention of an extension.
+    const std::string before = asStudent(w, "stu1", "1\n");
+    EXPECT_TRUE(has(before, "due " + original + "  not submitted"));
+    EXPECT_FALSE(has(before, "extended"));
+    // One student's extension is shown to that student only.
+    asLecturer(w, "4\n" + std::to_string(aid()) + "\n" + std::to_string(w.stu1->getId()) + "\n" + extended + "\n");
+    const std::string mine = asStudent(w, "stu1", "1\n");
+    EXPECT_TRUE(has(mine, "due " + extended + " (extended from " + original + ")  not submitted"));
+    EXPECT_FALSE(has(asStudent(w, "stu2", "1\n"), "extended"));
+    // A class extension is then shown to everybody, with the assignment's own deadline kept visible.
+    const std::string classWide = w.deadline().plusSeconds(3 * kDay).toLocal(0);
+    asLecturer(w, "4\n" + std::to_string(aid()) + "\n0\n" + classWide + "\n");
+    EXPECT_TRUE(has(asStudent(w, "stu2", "1\n"), "due " + classWide + " (extended from " + original + ")"));
+}
+
+TEST_F(SystemTest, SYS60_ClassExtension_ByALecturerOfAnotherCourse_IsRefused) {  // CR1 exception flow
+    at_(beforeDeadline());
+    const std::string when = w.deadline().plusSeconds(2 * kDay).toLocal(0);
+    const std::string out = asLecturer(w, "4\n" + std::to_string(aid()) + "\n0\n" + when + "\n", "lec2");
+    EXPECT_TRUE(has(out, "! "));
+    EXPECT_FALSE(w.assignmentRepo.findExtension(aid(), w.stu1->getId()).has_value());
+}
+
+TEST_F(SystemTest, SYS61_ClassExtensionKeepsALongerIndividualExtension_AndSaysSo) {  // CR1
+    at_(beforeDeadline());
+    const std::string longer = w.deadline().plusSeconds(3 * kDay).toLocal(0);
+    const std::string shorter = w.deadline().plusSeconds(kDay).toLocal(0);
+    asLecturer(w, "4\n" + std::to_string(aid()) + "\n" + std::to_string(w.stu1->getId()) + "\n" + longer + "\n");
+    const std::string out = asLecturer(w, "4\n" + std::to_string(aid()) + "\n0\n" + shorter + "\n");
+    EXPECT_TRUE(has(out, "Extension granted to 1 student(s) until " + shorter + ". 1 already had the same or a later "
+                                                                              "extension and kept it."));
+    EXPECT_EQ(w.assignmentRepo.findExtension(aid(), w.stu1->getId())->getNewDeadline(), w.deadline().plusSeconds(3 * kDay));
+}
+
 TEST_F(SystemTest, ACC01_StudentStory_SubmitThenSeeMarkOnlyAfterRelease) {
     at_(beforeDeadline());
     const std::string a = asStudent(w, "stu1", "1\n" + submitWork(aid(), "Essay on testing") + "1\n");
@@ -518,7 +570,7 @@ TEST_F(SystemTest, ACC05_AuditTrailAndMarksSurviveRestart_FileDatabase) {
         CourseService cs(users, deps, courses);
         AdminService admin(users, deps, courses);
         AuthService auth(users);
-        AssignmentService assignments(asg, courses, cs, clock);
+        AssignmentService assignments(asg, courses, cs, clock, db);
         AuditService auditSvc(audit, clock);
         SubmissionService submissions(subs, asg, courses, clock, db);
         MarkingService marking(subs, asg, cs, penalty, auditSvc, db);

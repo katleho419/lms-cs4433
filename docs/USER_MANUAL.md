@@ -1,6 +1,6 @@
 # User Manual
 
-Moderated Learning Management System, version 1.0.0. Pick your role:
+Moderated Learning Management System, version 1.1.0. Pick your role:
 [Everyone](#1-for-everyone) · [Student](#2-student) · [Lecturer](#3-lecturer) ·
 [Head of Department](#4-head-of-department) · [Administrator](#5-administrator) · [Messages](#6-messages-and-what-to-do)
 
@@ -83,8 +83,9 @@ Rules you should know:
 - **After the deadline**, or once your work has been marked, you cannot replace it. Late work is accepted once.
 - The answer cannot be empty and is limited to 100,000 characters.
 - You can only submit to courses you are enrolled in.
-- Your lecturer may give you more time (an extension). In version 1.0.0 the assignment list still shows the **original**
-  deadline, but the extension is applied when you submit. If in doubt, ask your lecturer (this is known limitation 1 in the release notes).
+- Your lecturer may give you more time (an extension), for you alone or for the whole class. When you have one, your list shows
+  the deadline that applies to you and the original one, for example
+  `due 2026-11-13 12:00 (extended from 2026-11-10 23:47)`. Work submitted before the extended time is on time.
 
 ---
 
@@ -96,7 +97,7 @@ Your menu:
      1 My courses
      2 Create assignment
      3 List assignments
-     4 Grant extension to a student
+     4 Grant extension (one student or the whole class)
      5 View submissions
      6 Mark a submission
      7 Change my password
@@ -107,8 +108,18 @@ Type the course id, a title (up to 100 characters), the deadline (`YYYY-MM-DD HH
 create assignments for courses you teach.
 
 ### Grant an extension (option 4)
-Type the assignment id; the program lists the enrolled students. Type the student's user id and the new deadline.
-The new deadline must be later than the assignment's own deadline, and only that student is affected.
+Type the assignment id; the program lists the enrolled students. Then:
+
+    Student user id (0 for the whole class):
+
+- **One student:** type the student's user id, then the new deadline. Only that student is affected.
+- **Whole class:** type `0`, then the new deadline. Every student enrolled in the course gets it, all together or not at all.
+  The program answers `Extension granted to 18 student(s) until 2026-11-13 12:00.`
+
+The new deadline must be later than the assignment's own deadline. An extension is never shortened: a student who already
+has the same or a later extension keeps it, and the program tells you how many did
+(`... 2 already had the same or a later extension and kept it.`). Students enrolled after you granted a class extension do
+not get it automatically; run option 4 again. Work that was already handed in late stays late.
 
 ### View submissions (option 5)
 Type the assignment id. Each line shows the submission id, the student, the version, the status, the late days and any marks:
@@ -214,6 +225,8 @@ anyone's password.
 | `Please enter a whole number.` | A number was expected (an id or a mark); type digits only |
 | `There is no assignment with id N.` | The id is wrong. Look it up in a list first |
 | `You are not enrolled in the course for this assignment.` | Ask the administrator to enrol you |
+| `No students are enrolled in this course.` | Lecturer: a class extension needs enrolled students; ask the administrator to enrol them |
+| `An extension must be later than the assignment deadline.` | Lecturer: type a later date and time than the assignment's own deadline |
 | `The deadline has passed, so you can no longer resubmit.` | You submitted on time before, but now it is after the deadline |
 | `Your work was submitted late or has already been marked, so it can no longer be replaced.` | Late or marked work cannot be changed; ask your lecturer |
 | `The submission must not be empty.` | Type your answer before the line with the full stop |
