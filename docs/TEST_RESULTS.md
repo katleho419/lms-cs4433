@@ -96,3 +96,25 @@ the fix was put back, the test passed.
 | Final run after the code review fixes | 207 | 207 | 0 |
 
 Business-logic line coverage: 98.2%. clang-tidy: 0 findings. Metrics: no function over the hard limits.
+
+## Update for version 1.1.0 (change request CR1)
+
+14 tests were added for the class-wide extension and the deadline shown to students (see `CHANGE_REQUEST_CR1.md`).
+
+| Group | New tests |
+|---|---:|
+| Service and integration (`CR1_ClassExtension`, `CR1_AssignmentList`) | 10 |
+| System (SYS58 to SYS61) | 4 |
+| **New** | **14** |
+
+| Run | Tests | Passed | Failed |
+|---|---:|---:|---:|
+| Before the change (version 1.0.0) | 207 | 207 | 0 |
+| After the change, with a stand-in test runner in the development environment | 221 | 221 | 0 |
+| After the change, GoogleTest in CI (`build-test` on the pull request) | 221 | see the pull request | |
+
+The stand-in runner was used because GoogleTest could not be downloaded in the development environment; it is not part of the
+project. The CI run with the real framework is the authoritative result. Each new rule was also removed on purpose to check
+that a test fails (four checks, listed in `CHANGE_REQUEST_CR1.md`).
+
+Business-logic line coverage: 98.6%. clang-tidy: 0 findings. Metrics: no function over the hard limits.

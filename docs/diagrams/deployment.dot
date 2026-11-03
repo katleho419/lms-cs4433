@@ -2,7 +2,7 @@
 // Render: dot -Tsvg deployment.dot -o deployment.svg   and   dot -Tpng -Gdpi=160 deployment.dot -o deployment.png
 digraph deployment {
   graph [rankdir=TB, fontname="Helvetica", fontsize=12, nodesep=0.5, ranksep=0.7, compound=true, pad=0.3,
-         label="Deployment diagram: Moderated LMS, single school computer (version 1.0.0)\n", labelloc=t];
+         label="Deployment diagram: Moderated LMS, single school computer (version 1.1.0)\n", labelloc=t];
   node  [fontname="Helvetica", fontsize=11];
   edge  [fontname="Helvetica", fontsize=10];
 

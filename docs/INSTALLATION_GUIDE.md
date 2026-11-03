@@ -1,6 +1,6 @@
 # Installation Guide (for the school technician)
 
-Version 1.0.0. You do not need to know C++. You need a Linux computer, an internet connection for the first install,
+Version 1.1.0 (installs 1.0.0 too: use the tag you need). You do not need to know C++. You need a Linux computer, an internet connection for the first install,
 and about 20 minutes. Every command below was run on a clean Ubuntu 24.04 computer before this guide was written.
 
 ## 1. What gets installed
@@ -43,7 +43,7 @@ Open a terminal. Type each command, press Enter, and check the result before the
 
     git clone https://github.com/katleho419/lms-cs4433.git
     cd lms-cs4433
-    git checkout v1.0.0
+    git checkout v1.1.0
 
 If you have a zip file instead: `unzip lms.zip` and `cd lms`.
 
@@ -129,7 +129,8 @@ lecturers to re-enter them.
 3. Repeat steps 3 and 4 of section 3 (build and install). The data file is not touched.
 4. Run the five checks in section 4.
 
-If the new version needs a different data layout, the program refuses to open the old file (message
+Going from 1.0.0 to 1.1.0 needs no data change: the data file format is the same, so the existing `lms.db` is used as it is.
+If a new version needs a different data layout, the program refuses to open the old file (message
 `created by a different version of this program`) instead of damaging it. Restore the old program version from its tag and ask the developer.
 
 ## 8. Uninstalling
@@ -166,7 +167,7 @@ If the new version needs a different data layout, the program refuses to open th
 | | |
 |---|---|
 | Computer name | |
-| Version installed | v1.0.0 |
+| Version installed | v1.1.0 |
 | Installed by | |
 | Date | |
 | Checks 1 to 5 passed | yes / no |

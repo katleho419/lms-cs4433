@@ -421,7 +421,7 @@ void ConsoleApp::adminEnrolStudent(const User& self) {
 void ConsoleApp::lecturerMenu(const UserPtr& user) {
     runMenu(user,
             "\n-- Lecturer --\n 1 My courses\n 2 Create assignment\n 3 List assignments\n"
-            " 4 Grant extension to a student\n 5 View submissions\n 6 Mark a submission\n"
+            " 4 Grant extension (one student or the whole class)\n 5 View submissions\n 6 Mark a submission\n"
             " 7 Change my password\n 0 Log out\n",
             &ConsoleApp::lecturerAction);
 }
@@ -490,7 +490,16 @@ void ConsoleApp::lecturerGrantExtension(const User& self) {
     for (const auto& u : s_.courses.studentsOf(self, asg.getCourseId())) {
         out_ << "  [" << u->getId() << "] " << u->getFullName() << "\n";
     }
-    if (!readInt("Student user id: ", st) || !readDateTime("New deadline", d)) {
+    if (!readInt("Student user id (0 for the whole class): ", st) || !readDateTime("New deadline", d)) {
+        return;
+    }
+    if (st == 0) {
+        const ClassExtensionResult r = s_.assignments.grantClassExtension(self, a, d);
+        out_ << "  Extension granted to " << r.extended << " student(s) until " << when(d) << ".";
+        if (r.unchanged > 0) {
+            out_ << " " << r.unchanged << " already had the same or a later extension and kept it.";
+        }
+        out_ << "\n";
         return;
     }
     s_.assignments.grantExtension(self, a, st, d);
@@ -709,7 +718,11 @@ void ConsoleApp::studentShowAssignments(const User& self) {
     }
     for (const auto& r : rows) {
         out_ << "  [" << r.assignment.getId() << "] " << r.courseCode << "  " << r.assignment.getTitle()
-             << "  due " << when(r.assignment.getDeadline()) << "  ";
+             << "  due " << when(r.effectiveDeadline);
+        if (r.effectiveDeadline > r.assignment.getDeadline()) {
+            out_ << " (extended from " << when(r.assignment.getDeadline()) << ")";
+        }
+        out_ << "  ";
         if (!r.current) {
             out_ << "not submitted\n";
             continue;

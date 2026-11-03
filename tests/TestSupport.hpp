@@ -57,7 +57,7 @@ struct World {
     CourseService courseSvc{users, departments, courses};
     AuthService auth{users};
     AdminService admin{users, departments, courses};
-    AssignmentService assignments{assignmentRepo, courses, courseSvc, clock};
+    AssignmentService assignments{assignmentRepo, courses, courseSvc, clock, db};
     AuditService audit{auditRepo, clock};
     SubmissionService submissions{submissionRepo, assignmentRepo, courses, clock, db};
     MarkingService marking{submissionRepo, assignmentRepo, courseSvc, penalty, audit, db};

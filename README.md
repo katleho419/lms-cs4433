@@ -22,6 +22,7 @@ never on a real installation. The database file is created readable by its owner
 - Technician: `docs/INSTALLATION_GUIDE.md` (with the deployment diagram `docs/diagrams/deployment.png`)
 - Users, by role: `docs/USER_MANUAL.md`
 - What is in this version and what is not: `docs/RELEASE_NOTES.md`
+- Maintenance: change request CR1 (extension for the whole class): `docs/CHANGE_REQUEST_CR1.md`
 
 ## Layout
 - src/domain   entities, polymorphic User, Strategy penalty policies, UserFactory

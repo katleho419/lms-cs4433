@@ -17,6 +17,7 @@ struct AssignmentRow {
     Assignment assignment;
     std::string courseCode;
     std::optional<Submission> current;  // the student's current version, if any
+    DateTime effectiveDeadline;         // the assignment deadline, or the student's later extension (CR1)
 };
 
 class SubmissionService {
