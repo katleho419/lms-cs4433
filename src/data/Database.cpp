@@ -2,6 +2,10 @@
 
 #include <utility>
 
+#if defined(__unix__) || defined(__APPLE__)
+#include <sys/stat.h>
+#endif
+
 #include "SchemaSql.hpp"
 #include "util/Errors.hpp"
 
@@ -15,6 +19,20 @@ std::string messageFor(sqlite3* db, const std::string& prefix) {
     return prefix + ": " + (db != nullptr ? sqlite3_errmsg(db) : "no connection");
 }
 
+// The file holds password hashes and every student's work and marks, so only its owner may read it.
+// Applied on every open, which also tightens a file that an older version created with open permissions.
+// A file system without Unix permissions (a USB stick, for example) cannot honour this; nothing more can be
+// done there.
+void restrictToOwner(const std::string& path) {
+#if defined(__unix__) || defined(__APPLE__)
+    if (path != ":memory:" && !path.empty()) {
+        static_cast<void>(chmod(path.c_str(), S_IRUSR | S_IWUSR));
+    }
+#else
+    static_cast<void>(path);
+#endif
+}
+
 }  // namespace
 
 Database::Database(const std::string& path) {
@@ -25,6 +43,7 @@ Database::Database(const std::string& path) {
         db_ = nullptr;
         throw DatabaseError(message);
     }
+    restrictToOwner(path);
     try {
         sqlite3_busy_timeout(db_, kBusyTimeoutMs);
         execute("PRAGMA foreign_keys = ON;");

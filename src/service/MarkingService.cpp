@@ -3,6 +3,7 @@
 #include "service/AccessControl.hpp"
 #include "service/TransactionResult.hpp"
 #include "util/Errors.hpp"
+#include "util/Limits.hpp"
 #include "util/Validation.hpp"
 
 namespace lms {
@@ -20,7 +21,7 @@ std::vector<Submission> MarkingService::submissionsFor(const User& lecturer, int
 Submission MarkingService::mark(const User& lecturer, int submissionId, int rawMark,
                                 const std::string& feedback, const std::string& reason) {
     requirePermission(lecturer, Permission::MarkSubmission, "mark submissions");
-    const std::string cleanFeedback = requireText(feedback, "The feedback", 5000);
+    const std::string cleanFeedback = requireText(feedback, "The feedback", limits::kMaxFeedback);
 
     std::optional<Submission> result;
     unitOfWork_.runInTransaction([&] {
@@ -50,6 +51,10 @@ Submission MarkingService::mark(const User& lecturer, int submissionId, int rawM
         requireRange(rawMark, "The mark", 0, assignment->getMaxMark());
 
         std::string why = trim(reason);
+        if (why.size() > limits::kMaxReason) {
+            throw ValidationError("The reason must be at most " + std::to_string(limits::kMaxReason) +
+                                  " characters.");
+        }
         if (status == SubmissionStatus::Marked && why.empty()) {
             throw ValidationError("A reason is required when changing a mark.");
         }

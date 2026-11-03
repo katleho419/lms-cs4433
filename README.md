@@ -15,6 +15,9 @@ Ubuntu/Debian: `sudo apt install build-essential cmake libsqlite3-dev libssl-dev
 Demo logins: admin/Admin12345, hod/Hod123456, lecturer/Lect123456, student1/Stud123456.
 Without --seed-demo, the program asks you to create the first administrator.
 
+WARNING: the demo accounts have passwords that are published here. Use --seed-demo only for testing and demonstrations,
+never on a real installation. The database file is created readable by its owner only.
+
 ## Layout
 - src/domain   entities, polymorphic User, Strategy penalty policies, UserFactory
 - src/data     Database wrapper, Repository interfaces and SQLite implementations (parameterised queries only)

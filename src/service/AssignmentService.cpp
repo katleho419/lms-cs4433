@@ -2,6 +2,7 @@
 
 #include "service/AccessControl.hpp"
 #include "util/Errors.hpp"
+#include "util/Limits.hpp"
 #include "util/Validation.hpp"
 
 namespace lms {
@@ -12,7 +13,7 @@ Assignment AssignmentService::createAssignment(const User& actor, int courseId, 
     access_.requireCourse(courseId);
     access_.requireLecturerOf(actor, courseId);
 
-    Assignment assignment(0, courseId, requireText(title, "The title", 100), deadline,
+    Assignment assignment(0, courseId, requireText(title, "The title", limits::kMaxTitle), deadline,
                           requireRange(maxMark, "The maximum mark", 1, kMaxMarkLimit));
     if (deadline <= clock_.now()) {
         throw ValidationError("The deadline must be in the future.");

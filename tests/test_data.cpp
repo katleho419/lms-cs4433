@@ -2,6 +2,10 @@
 #include <cstdio>
 #include <filesystem>
 
+#if defined(__unix__) || defined(__APPLE__)
+#include <sys/stat.h>
+#endif
+
 #include "TestSupport.hpp"
 
 using namespace lms;
@@ -53,6 +57,29 @@ TEST(Database, ReopeningAKeepsDataAndRejectsOtherVersions) {
     EXPECT_THROW_MSG(Database reopened(path), DatabaseError, "different version");
     std::remove(path.c_str());
 }
+
+#if defined(__unix__) || defined(__APPLE__)
+// Code review finding R-01: the file holds password hashes and all marks, so it must not be readable by other users.
+TEST(Database, FileIsReadableAndWritableOnlyByItsOwner) {
+    const auto path = (std::filesystem::temp_directory_path() / "lms_test_permissions.db").string();
+    std::remove(path.c_str());
+    {
+        Database db(path);
+    }
+    struct stat info {};
+    ASSERT_EQ(stat(path.c_str(), &info), 0);
+    EXPECT_EQ(info.st_mode & 0777u, 0600u);
+
+    // A file made earlier with open permissions is tightened the next time the program opens it.
+    ASSERT_EQ(chmod(path.c_str(), 0644), 0);
+    {
+        Database db(path);
+    }
+    ASSERT_EQ(stat(path.c_str(), &info), 0);
+    EXPECT_EQ(info.st_mode & 0777u, 0600u);
+    std::remove(path.c_str());
+}
+#endif
 
 TEST(Database, TransactionCommitsOnSuccess) {
     Database db(":memory:");
