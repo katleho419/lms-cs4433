@@ -84,3 +84,15 @@ on the same file (lecturer sees the stored submission) passed.
 (late window changed so that work exactly 3 days late scored zero). All 45 system tests still passed, which showed a gap:
 no system test marked work at the 3-day boundary (the unit tests did). Test SYS22b was added; it fails with the fault and
 passes without it. The fault was then removed. Recorded as TG-01 in `DEFECT_LOG.md`.
+
+## Update after the Phase 6 code review
+
+Two regression tests were added for the review findings DEF-03 (database file permissions) and DEF-04 (limit on the reason for a
+mark change). Both were checked the same way as in the system test stage: the fix was removed on purpose, the new test failed,
+the fix was put back, the test passed.
+
+| Run | Tests | Passed | Failed |
+|---|---:|---:|---:|
+| Final run after the code review fixes | 207 | 207 | 0 |
+
+Business-logic line coverage: 98.2%. clang-tidy: 0 findings. Metrics: no function over the hard limits.

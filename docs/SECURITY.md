@@ -24,5 +24,8 @@ The audit log cannot be updated or deleted, even through SQL.
 
 ## Known limitations
 - No account lockout across restarts or password reset flow (admin must recreate the account).
-- The database file is not encrypted; protect it with file-system permissions.
+- The database file is not encrypted. On Linux and macOS the program creates it readable and writable by its owner only (mode 0600)
+  and tightens an older file the next time it opens it (code review finding R-01). On file systems without Unix permissions
+  (a USB stick, for example) this cannot be enforced, so keep the file on a disk only the intended users can read.
+- `--seed-demo` creates accounts whose passwords are published in the README. Never use it on a real installation.
 - Test clock option must never be enabled in release builds.

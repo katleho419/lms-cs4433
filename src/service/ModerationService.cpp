@@ -5,6 +5,7 @@
 #include "service/AccessControl.hpp"
 #include "service/TransactionResult.hpp"
 #include "util/Errors.hpp"
+#include "util/Limits.hpp"
 #include "util/Validation.hpp"
 
 namespace lms {
@@ -44,7 +45,7 @@ std::vector<Submission> ModerationService::reviewMarks(const User& hod, int assi
 Submission ModerationService::adjustMark(const User& hod, int submissionId, int newMark,
                                          const std::string& reason) {
     requirePermission(hod, Permission::ModerateMarks, "adjust marks");
-    const std::string why = requireText(reason, "The reason", 500);
+    const std::string why = requireText(reason, "The reason", limits::kMaxReason);
 
     std::optional<Submission> result;
     unitOfWork_.runInTransaction([&] {
@@ -146,7 +147,8 @@ ApproveResult ModerationService::approveReviewed(const User& hod, int assignment
 Submission ModerationService::returnToLecturer(const User& hod, int submissionId,
                                                const std::string& comment) {
     requirePermission(hod, Permission::ModerateMarks, "return work to the lecturer");
-    const std::string why = "Returned to lecturer: " + requireText(comment, "The comment", 450);
+    const std::string why =
+        "Returned to lecturer: " + requireText(comment, "The comment", limits::kMaxComment);
 
     std::optional<Submission> result;
     unitOfWork_.runInTransaction([&] {

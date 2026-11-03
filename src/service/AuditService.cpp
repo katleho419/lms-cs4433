@@ -1,5 +1,6 @@
 #include "service/AuditService.hpp"
 
+#include "util/Limits.hpp"
 #include "util/Validation.hpp"
 
 namespace lms {
@@ -7,7 +8,7 @@ namespace lms {
 void AuditService::record(int submissionId, int userId, std::optional<int> oldValue, int newValue,
                           const std::string& reason) {
     AuditEntry entry(0, submissionId, userId, clock_.now(), oldValue, newValue,
-                     requireText(reason, "The reason", 600));
+                     requireText(reason, "The reason", limits::kMaxAuditText));
     audits_.save(entry);
 }
 

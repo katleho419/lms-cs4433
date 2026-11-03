@@ -2,6 +2,7 @@
 
 #include "service/AccessControl.hpp"
 #include "util/Errors.hpp"
+#include "util/Limits.hpp"
 #include "util/Validation.hpp"
 
 namespace lms {
@@ -37,7 +38,7 @@ std::vector<UserPtr> AdminService::listUsers(const User& actor) const {
 
 Department AdminService::createDepartment(const User& actor, const std::string& name) {
     requirePermission(actor, Permission::ManageDepartments, "manage departments");
-    Department department(0, requireText(name, "The department name", 100));
+    Department department(0, requireText(name, "The department name", limits::kMaxName));
     if (departments_.findByName(department.getName())) {
         throw ValidationError("A department with that name already exists.");
     }
@@ -48,8 +49,8 @@ Department AdminService::createDepartment(const User& actor, const std::string& 
 Course AdminService::createCourse(const User& actor, const std::string& code, const std::string& title,
                                   int departmentId) {
     requirePermission(actor, Permission::ManageCourses, "manage courses");
-    Course course(0, requireText(code, "The course code", 20), requireText(title, "The course title", 100),
-                  departmentId);
+    Course course(0, requireText(code, "The course code", limits::kMaxCourseCode),
+                  requireText(title, "The course title", limits::kMaxTitle), departmentId);
     if (!departments_.findById(departmentId)) {
         throw NotFoundError("That department does not exist.");
     }

@@ -1,3 +1,6 @@
+// The two late-penalty rules that can be plugged into MarkingService (Strategy pattern).
+// DailyPercentPenalty is the rule of the specification (10% of the maximum mark per late day, for up to
+// 3 days, then zero); NoPenalty is for courses that do not penalise late work.
 #ifndef LMS_DOMAIN_PENALTYPOLICIES_HPP
 #define LMS_DOMAIN_PENALTYPOLICIES_HPP
 

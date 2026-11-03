@@ -493,6 +493,21 @@ TEST(UC02_A1_Mark, ChangingAnExistingMarkNeedsAReasonAndKeepsTheOldValueInTheLog
     EXPECT_NE(log[1].getReason().find("Missed a correct answer"), std::string::npos);
 }
 
+// Code review finding R-02: the reason was only checked after the automatic suffix had been added, so the limit
+// that applied depended on the suffix and the message named a different number (600) from the real one.
+TEST(UC02_A1_Mark, TheReasonForChangingAMarkHasOneClearLimitOf500Characters) {
+    World w;
+    Submission s = w.submitAs(w.stu1, kNow);
+    w.marking.mark(*w.lec, s.getId(), 60, "fb", "");
+    EXPECT_NO_THROW(w.marking.mark(*w.lec, s.getId(), 61, "fb", std::string(500, 'r')));
+    EXPECT_THROW_MSG(w.marking.mark(*w.lec, s.getId(), 62, "fb", std::string(501, 'r')), ValidationError,
+                     "at most 500 characters");
+    EXPECT_THROW_MSG(w.marking.mark(*w.lec, s.getId(), 62, "fb", std::string(590, 'r')), ValidationError,
+                     "at most 500 characters");
+    EXPECT_EQ(*w.submissionRepo.findById(s.getId())->getFinalMark(), 61);  // rejected attempts changed nothing
+    EXPECT_EQ(w.audit.history(s.getId()).size(), 2u);
+}
+
 TEST(UC02_E3_Mark, ModeratedOrReleasedWorkCannotBeChangedByTheLecturer) {
     World w;
     Submission s = w.submitAs(w.stu1, kNow);

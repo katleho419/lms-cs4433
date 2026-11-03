@@ -2,6 +2,7 @@
 
 #include "security/PasswordHasher.hpp"
 #include "util/Errors.hpp"
+#include "util/Limits.hpp"
 #include "util/Validation.hpp"
 
 namespace lms {
@@ -20,7 +21,7 @@ void spendHashingTime(const std::string& password) {
 }  // namespace
 
 UserPtr AuthService::login(const std::string& username, const std::string& password) const {
-    if (username.size() > 64 || password.size() > 128) {
+    if (username.size() > limits::kMaxLoginUsername || password.size() > limits::kMaxLoginPassword) {
         spendHashingTime("x");
         throw AuthenticationError(kLoginFailed);
     }

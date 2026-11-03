@@ -5,14 +5,16 @@
 #include "security/PasswordHasher.hpp"
 #include "security/PasswordPolicy.hpp"
 #include "util/Errors.hpp"
+#include "util/Limits.hpp"
 #include "util/Validation.hpp"
 
 namespace lms {
 namespace {
 
 void validateUsername(const std::string& username) {
-    if (username.size() < 3 || username.size() > 32) {
-        throw ValidationError("The username must be 3 to 32 characters long.");
+    if (username.size() < limits::kMinUsername || username.size() > limits::kMaxUsername) {
+        throw ValidationError("The username must be " + std::to_string(limits::kMinUsername) + " to " +
+                              std::to_string(limits::kMaxUsername) + " characters long.");
     }
     for (const char c : username) {
         const auto u = static_cast<unsigned char>(c);
@@ -28,12 +30,12 @@ void validateUsername(const std::string& username) {
 std::unique_ptr<User> UserFactory::createUser(Role role, const UserData& data) {
     const std::string username = trim(data.username);
     validateUsername(username);
-    const std::string fullName = requireText(data.fullName, "The full name", 100);
+    const std::string fullName = requireText(data.fullName, "The full name", limits::kMaxName);
     PasswordPolicy::validate(data.password, username);
 
     std::string studentNumber;
     if (role == Role::Student) {
-        studentNumber = requireText(data.studentNumber, "The student number", 20);
+        studentNumber = requireText(data.studentNumber, "The student number", limits::kMaxStudentNumber);
     }
     if ((role == Role::Lecturer || role == Role::Hod) && data.departmentId <= 0) {
         throw ValidationError("A department is required for this role.");
