@@ -87,6 +87,13 @@ void Submission::returnForRemarking() {
     transitionTo(lateDays_ == 0 ? SubmissionStatus::Submitted : SubmissionStatus::Late);
 }
 
+Submission Submission::redactedForStudent() const {
+    if (isVisibleToStudent()) return *this;
+    const SubmissionStatus shown = lateDays_ == 0 ? SubmissionStatus::Submitted : SubmissionStatus::Late;
+    return Submission(id_, assignmentId_, studentId_, version_, content_, submittedAt_, shown, lateDays_,
+                      std::nullopt, std::nullopt, "");
+}
+
 bool Submission::canResubmit(const DateTime& now, const DateTime& effectiveDeadline) const {
     return status_ == SubmissionStatus::Submitted && now <= effectiveDeadline;
 }

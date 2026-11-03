@@ -20,7 +20,8 @@ CMake options:
 - `LMS_WARNINGS_AS_ERRORS` (OFF) treat warnings as errors.
 - `LMS_ENABLE_TEST_CLOCK` (OFF) lets the `LMS_FAKE_NOW` environment variable (e.g. `2026-11-08T10:00:00Z`)
   set the clock, so late-submission rules can be demonstrated. Testing only; never use in a release build.
-- `LMS_BUILD_TESTS` (ON) reserved for the Phase 5 test suite.
+- `LMS_BUILD_TESTS` (OFF) builds the GoogleTest suite (`tests/`). Needs `libgtest-dev` or network access.
+- `LMS_ENABLE_COVERAGE` (OFF) adds gcov instrumentation (GCC or Clang).
 
 ## Run
     ./build/lms --seed-demo     first run only: creates lms.db with demo accounts
@@ -36,3 +37,12 @@ Demo logins: admin/Admin12345, hod/Hod123456, lecturer/Lect123456, student1/Stud
 | "Cannot open the database file" | folder does not exist or is read-only; use `--db` with a writable path |
 | "created by a different version of this program" | file's `PRAGMA user_version` is not 1; delete it or use another file |
 | "database is locked" | another program has the file open; waits 5 s then fails |
+
+## Run the tests
+    sudo apt install libgtest-dev          # or let CMake download GoogleTest
+    cmake -S . -B build -G Ninja -DLMS_BUILD_TESTS=ON -DLMS_ENABLE_COVERAGE=ON
+    cmake --build build
+    ctest --test-dir build --output-on-failure
+    python3 tools/coverage.py build        # line coverage per layer (needs gcov)
+
+See `docs/TEST_RESULTS.md`, `docs/TEST_STRATEGY.md` and `docs/DEFECT_LOG.md`.

@@ -9,5 +9,7 @@
 | 5 | Submission states Submitted/Late -> Marked -> Moderated -> Released | Same, plus Marked -> Submitted/Late when the HOD returns work | Return-to-lecturer path |
 | 6 | Extension visible to students | Extensions applied to deadline checks but not shown on the student's assignment list | Deliberately left for change request CR1 (Phase 8) |
 | 7 | UserFactory | `createUser` for new accounts, `restore` for rows read from the database | Hashing only happens for new accounts |
+| 8 | Students see their own work and marks | `Submission::redactedForStudent()`, used by `SubmissionService::assignmentsFor` | BR-05 enforced in the service layer, not only the screen (DEF-01) |
+| 9 | Approve and approve-all take only ids | `ModerationService::review`, `approve(..., reviewedFinalMark)`, `approveReviewed` | UC-03 E4 stale-mark protection (DEF-02) |
 
-Update the Phase 3 class diagram with items 1-4 and 7 before submission.
+The Phase 3 class diagram is kept as the original design baseline. This document records every change made during implementation and the reason for it.

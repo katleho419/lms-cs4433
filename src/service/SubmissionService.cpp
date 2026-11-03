@@ -66,8 +66,9 @@ std::vector<AssignmentRow> SubmissionService::assignmentsFor(const User& student
     std::vector<AssignmentRow> rows;
     for (const Course& course : courses_.findByStudent(student.getId())) {
         for (const Assignment& assignment : assignments_.findByCourse(course.getId())) {
-            rows.push_back({assignment, course.getCode(),
-                            submissions_.findLatest(assignment.getId(), student.getId())});
+            std::optional<Submission> current = submissions_.findLatest(assignment.getId(), student.getId());
+            if (current) current = current->redactedForStudent();  // BR-05: no marks before release
+            rows.push_back({assignment, course.getCode(), current});
         }
     }
     return rows;
