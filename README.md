@@ -36,3 +36,7 @@ never on a real installation. The database file is created readable by its owner
 ## Coding standard
 C++17, no extensions; 4-space indent; Types CamelCase, members trailing_underscore_, functions camelCase;
 RAII for all resources; exceptions derived from lms::LmsError; warnings: -Wall -Wextra -Wpedantic -Wshadow -Wconversion.
+
+## Project video
+
+[Watch the project video (MKV, 232 MB, GitHub release v1.1.0)](https://github.com/katleho419/lms-cs4433/releases/download/v1.1.0/Learning.Management.System.mkv)
